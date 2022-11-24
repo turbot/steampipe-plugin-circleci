@@ -20,6 +20,7 @@ func Plugin(ctx context.Context) *plugin.Plugin {
 		},
 		TableMap: map[string]*plugin.Table{
 			"circleci_project": tableCircleciProject(),
+			"circleci_orb":     tableCircleciOrb(),
 		},
 	}
 
