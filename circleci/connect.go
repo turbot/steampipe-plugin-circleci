@@ -7,7 +7,7 @@ import (
 
 	"github.com/CircleCI-Public/circleci-cli/api/graphql"
 	"github.com/jszwedko/go-circleci"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 )
 
 func ConnectV1(ctx context.Context, d *plugin.QueryData) (*circleci.Client, error) {
