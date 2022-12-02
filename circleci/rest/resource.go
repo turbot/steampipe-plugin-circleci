@@ -9,16 +9,13 @@ type PipelineResponse struct {
 			Type    string `json:"type"`
 			Message string `json:"message"`
 		} `json:"errors"`
-		ProjectSlug       string    `json:"project_slug"`
-		UpdatedAt         time.Time `json:"updated_at"`
-		Number            int       `json:"number"`
-		TriggerParameters struct {
-			Property1 string `json:"property1"`
-			Property2 string `json:"property2"`
-		} `json:"trigger_parameters"`
-		State     string    `json:"state"`
-		CreatedAt time.Time `json:"created_at"`
-		Trigger   struct {
+		ProjectSlug       string            `json:"project_slug"`
+		UpdatedAt         time.Time         `json:"updated_at"`
+		Number            int               `json:"number"`
+		TriggerParameters map[string]string `json:"trigger_parameters"`
+		State             string            `json:"state"`
+		CreatedAt         time.Time         `json:"created_at"`
+		Trigger           struct {
 			Type       string    `json:"type"`
 			ReceivedAt time.Time `json:"received_at"`
 			Actor      struct {
