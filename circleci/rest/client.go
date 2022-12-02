@@ -166,6 +166,26 @@ func (c *Client) ListPipelines(vcs, org string) (*PipelineResponse, error) {
 	return pipelineResp, nil
 }
 
+func (c *Client) ListPipelinesWorkflow(pipelineId string) (*WorkflowResponse, error) {
+	u := &url.URL{
+		Path: fmt.Sprintf("pipeline/%s/workflow", pipelineId),
+	}
+
+	req, err := c.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	workflowResp := &WorkflowResponse{}
+
+	_, err = c.DoRequest(req, workflowResp)
+	if err != nil {
+		return nil, err
+	}
+
+	return workflowResp, nil
+}
+
 // Slug returns a project slug, including the VCS, organization, and project names
 func Slug(vcs, org, project string) string {
 	return fmt.Sprintf("%s/%s/%s", vcs, org, project)

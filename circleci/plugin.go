@@ -23,6 +23,7 @@ func Plugin(ctx context.Context) *plugin.Plugin {
 			"circleci_orb":      tableCircleciOrb(),
 			"circleci_pipeline": tableCircleciPipeline(),
 			"circleci_project":  tableCircleciProject(),
+			"circleci_workflow": tableCircleciWorkflow(),
 		},
 	}
 
