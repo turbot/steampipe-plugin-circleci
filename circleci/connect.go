@@ -10,9 +10,9 @@ import (
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 )
 
-func ConnectV1(ctx context.Context, d *plugin.QueryData) (*circleci.Client, error) {
+func ConnectV1Sdk(ctx context.Context, d *plugin.QueryData) (*circleci.Client, error) {
 	// have we already created and cached the session?
-	sessionCacheKey := "CircleciSessionV1"
+	sessionCacheKey := "CircleciSessionV1Sdk"
 	if cachedData, ok := d.ConnectionManager.Cache.Get(sessionCacheKey); ok {
 		return cachedData.(*circleci.Client), nil
 	}
@@ -35,9 +35,9 @@ func ConnectV1(ctx context.Context, d *plugin.QueryData) (*circleci.Client, erro
 
 }
 
-func ConnectV2(ctx context.Context, d *plugin.QueryData) (*graphql.Client, error) {
+func ConnectV2Sdk(ctx context.Context, d *plugin.QueryData) (*graphql.Client, error) {
 	// have we already created and cached the session?
-	sessionCacheKey := "CircleciSessionV2"
+	sessionCacheKey := "CircleciSessionV2Sdk"
 	if cachedData, ok := d.ConnectionManager.Cache.Get(sessionCacheKey); ok {
 		return cachedData.(*graphql.Client), nil
 	}

@@ -66,7 +66,7 @@ func tableCircleciProject() *plugin.Table {
 
 func listCircleciProjects(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
 	logger := plugin.Logger(ctx)
-	client, err := ConnectV1(ctx, d)
+	client, err := ConnectV1Sdk(ctx, d)
 	if err != nil {
 		logger.Error("circleci_project.listCircleciProjects", "connect_error", err)
 		return nil, err
