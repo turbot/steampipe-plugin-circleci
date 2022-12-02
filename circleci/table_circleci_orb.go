@@ -35,7 +35,7 @@ func tableCircleciOrb() *plugin.Table {
 
 func listCircleciOrbs(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
 	logger := plugin.Logger(ctx)
-	client, err := ConnectV2(ctx, d)
+	client, err := ConnectV2Sdk(ctx, d)
 	if err != nil {
 		logger.Error("circleci_orb.listCircleciOrbs", "connect_error", err)
 		return nil, err
