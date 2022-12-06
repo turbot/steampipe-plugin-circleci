@@ -7,7 +7,6 @@ import (
 	"github.com/CircleCI-Public/circleci-cli/api"
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
-	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
 )
 
 //// TABLE DEFINITION
@@ -21,12 +20,10 @@ func tableCircleciOrb() *plugin.Table {
 		},
 
 		Columns: []*plugin.Column{
-			{
-				Name:        "raw",
-				Description: "Raw data.",
-				Type:        proto.ColumnType_JSON,
-				Transform:   transform.FromValue(),
-			},
+			{Name: "orb_base", Description: "", Type: proto.ColumnType_JSON},
+			{Name: "commands", Description: "", Type: proto.ColumnType_JSON},
+			{Name: "jobs", Description: "", Type: proto.ColumnType_JSON},
+			{Name: "executors", Description: "", Type: proto.ColumnType_JSON},
 		},
 	}
 }
