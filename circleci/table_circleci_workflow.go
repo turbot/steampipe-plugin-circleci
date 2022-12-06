@@ -41,8 +41,7 @@ func tableCircleciWorkflow() *plugin.Table {
 
 func listCircleciWorkflows(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
 	logger := plugin.Logger(ctx)
-	pipelineId := d.Table.Get.KeyColumns.Find("pipeline_id").String()
-	logger.Info("pipelineId")
+	pipelineId := d.EqualsQualString("pipeline_id")
 
 	// Empty check for pipelineId
 	if pipelineId == "" {
