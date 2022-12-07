@@ -14,22 +14,22 @@ import (
 func tableCircleciPipeline() *plugin.Table {
 	return &plugin.Table{
 		Name:        "circleci_pipeline",
-		Description: "",
+		Description: "CircleCI pipelines are the highest-level unit of work, encompassing a project’s full .circleci/config.yml file.",
 		List: &plugin.ListConfig{
 			Hydrate: listCircleciPipelines,
 		},
 
 		Columns: []*plugin.Column{
-			{Name: "created_at", Description: "", Type: proto.ColumnType_TIMESTAMP},
-			{Name: "errors", Description: "", Type: proto.ColumnType_JSON},
-			{Name: "id", Description: "", Type: proto.ColumnType_STRING, Transform: transform.FromField("ID")},
-			{Name: "number", Description: "", Type: proto.ColumnType_INT},
-			{Name: "project_slug", Description: "", Type: proto.ColumnType_STRING},
-			{Name: "state", Description: "", Type: proto.ColumnType_STRING},
-			{Name: "trigger_parameters", Description: "", Type: proto.ColumnType_JSON},
-			{Name: "trigger", Description: "", Type: proto.ColumnType_JSON},
-			{Name: "updated_at", Description: "", Type: proto.ColumnType_TIMESTAMP},
-			{Name: "vcs", Description: "", Type: proto.ColumnType_JSON},
+			{Name: "created_at", Description: "Timestamp of when pipeline was created.", Type: proto.ColumnType_TIMESTAMP},
+			{Name: "errors", Description: "A list of errors while executing pipeline's jobs.", Type: proto.ColumnType_JSON},
+			{Name: "id", Description: "Unique key for the pipeline.", Type: proto.ColumnType_STRING, Transform: transform.FromField("ID")},
+			{Name: "number", Description: "A second identifier for the pipeline.", Type: proto.ColumnType_INT},
+			{Name: "project_slug", Description: "A unique identification for the project in the form of: <vcs_type>/<org_name>/<repo_name> .", Type: proto.ColumnType_STRING},
+			{Name: "state", Description: "The state of the pipeline.", Type: proto.ColumnType_STRING},
+			{Name: "trigger_parameters", Description: "Any parameter fot pipeline triggering.", Type: proto.ColumnType_JSON},
+			{Name: "trigger", Description: "What triggers the pipeline to run.", Type: proto.ColumnType_JSON},
+			{Name: "updated_at", Description: "Timestamp of when pipeline was updated.", Type: proto.ColumnType_TIMESTAMP},
+			{Name: "vcs", Description: "Version control system of the pipeline", Type: proto.ColumnType_JSON},
 		},
 	}
 }
