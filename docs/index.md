@@ -28,7 +28,7 @@ select
   author_name,
   build_url
 from
-  circleci_build;  
+  circleci_build;
 ```
 
 ```
