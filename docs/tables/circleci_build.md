@@ -4,6 +4,26 @@ Result of a single execution of a pipeline.
 
 ## Examples
 
+### Last 10 successful builds
+
+```sql
+select
+  username as "organization",
+  reponame,
+  branch,
+  build_time_millis,
+  status,
+  author_name,
+  build_url
+from
+  circleci_build
+where
+  status = 'success'
+order by
+  stop_time desc
+limit 10;
+```
+
 ### Amount of failed builds by repository
 
 ```sql

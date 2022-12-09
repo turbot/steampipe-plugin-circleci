@@ -148,7 +148,7 @@ func (c *Client) ListPipelines(vcs, org string) (*PipelineResponse, error) {
 	}
 	values := u.Query()
 	values.Add("org-slug", slug)
-	values.Add("mine", "true")
+	values.Add("mine", "false")
 	u.RawQuery = values.Encode()
 
 	req, err := c.NewRequest("GET", u, nil)
