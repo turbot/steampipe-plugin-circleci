@@ -83,7 +83,7 @@ func listCircleciBuilds(ctx context.Context, d *plugin.QueryData, _ *plugin.Hydr
 	logger := plugin.Logger(ctx)
 	client, err := ConnectV1Sdk(ctx, d)
 	if err != nil {
-		logger.Error("circleci_project.listCircleciProjects", "connect_error", err)
+		logger.Error("circleci_build.listCircleciBuilds", "connect_error", err)
 		return nil, err
 	}
 

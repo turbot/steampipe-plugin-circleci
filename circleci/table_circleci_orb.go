@@ -14,16 +14,16 @@ import (
 func tableCircleciOrb() *plugin.Table {
 	return &plugin.Table{
 		Name:        "circleci_orb",
-		Description: "",
+		Description: "Reusable snippets of code that help automate repeated processes, accelerate project setup, and make it easy to integrate with third-party tools.",
 		List: &plugin.ListConfig{
 			Hydrate: listCircleciOrbs,
 		},
 
 		Columns: []*plugin.Column{
-			{Name: "orb_base", Description: "", Type: proto.ColumnType_JSON},
-			{Name: "commands", Description: "", Type: proto.ColumnType_JSON},
-			{Name: "jobs", Description: "", Type: proto.ColumnType_JSON},
-			{Name: "executors", Description: "", Type: proto.ColumnType_JSON},
+			{Name: "orb_base", Description: "Holds Orb name, version and statistic.", Type: proto.ColumnType_JSON},
+			{Name: "commands", Description: "Instructions to be performed.", Type: proto.ColumnType_JSON},
+			{Name: "jobs", Description: "Are collections of steps, which run commands/scripts as required.", Type: proto.ColumnType_JSON},
+			{Name: "executors", Description: "Executors define the underlying technology to run a job.", Type: proto.ColumnType_JSON},
 		},
 	}
 }

@@ -14,38 +14,40 @@ import (
 func tableCircleciWorkflow() *plugin.Table {
 	return &plugin.Table{
 		Name:        "circleci_workflow",
-		Description: "",
+		Description: "Workflows define a list of jobs and their run order.",
 		List: &plugin.ListConfig{
 			Hydrate:    listCircleciWorkflows,
 			KeyColumns: plugin.SingleColumn("pipeline_id"),
 		},
 
 		Columns: []*plugin.Column{
-			{Name: "canceled_by", Description: "Who canceled the workflow.", Type: proto.ColumnType_STRING},
+			{Name: "canceled_by", Description: "Id of the user who canceled the workflow.", Type: proto.ColumnType_STRING},
 			{Name: "created_at", Description: "Timestamp of when workflow was created.", Type: proto.ColumnType_TIMESTAMP},
-			{Name: "errored_by", Description: "", Type: proto.ColumnType_STRING},
+			{Name: "errored_by", Description: "Id of the user who caused the workflow to error.", Type: proto.ColumnType_STRING},
 			{Name: "id", Description: "Unique key for the workflow.", Type: proto.ColumnType_STRING, Transform: transform.FromField("ID")},
 			{Name: "name", Description: "Human readable name of the workflow.", Type: proto.ColumnType_STRING},
 			{Name: "pipeline_id", Description: "Unique key for the pipeline.", Type: proto.ColumnType_STRING, Transform: transform.FromField("PipelineID")},
 			{Name: "pipeline_number", Description: "A second identifier for the pipeline.", Type: proto.ColumnType_INT},
 			{Name: "project_slug", Description: "A unique identification for the project in the form of: <vcs_type>/<org_name>/<repo_name> .", Type: proto.ColumnType_STRING},
-			{Name: "started_by", Description: "", Type: proto.ColumnType_STRING},
-			{Name: "status", Description: "", Type: proto.ColumnType_STRING},
+			{Name: "started_by", Description: "Id of the user who started the workflow.", Type: proto.ColumnType_STRING},
+			{Name: "status", Description: "Workflow status", Type: proto.ColumnType_STRING},
 			{Name: "stopped_at", Description: "Timestamp of when workflow was stopped.", Type: proto.ColumnType_TIMESTAMP},
-			{Name: "tag", Description: "", Type: proto.ColumnType_STRING},
 		},
 	}
 }
 
 //// LIST FUNCTION
 
-func listCircleciWorkflows(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
+func listCircleciWorkflows(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
 	logger := plugin.Logger(ctx)
 	pipelineId := d.EqualsQualString("pipeline_id")
 
 	// Empty check for pipelineId
 	if pipelineId == "" {
-		return nil, nil
+		pipelineId = h.Item.(map[string]interface{})["PipelineId"].(string)
+		if pipelineId == "" {
+			return nil, nil
+		}
 	}
 
 	client, err := ConnectV2RestApi(ctx, d)

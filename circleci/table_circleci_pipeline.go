@@ -2,6 +2,7 @@ package circleci
 
 import (
 	"context"
+	"errors"
 	"strings"
 
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
@@ -16,7 +17,8 @@ func tableCircleciPipeline() *plugin.Table {
 		Name:        "circleci_pipeline",
 		Description: "CircleCI pipelines are the highest-level unit of work, encompassing a project’s full .circleci/config.yml file.",
 		List: &plugin.ListConfig{
-			Hydrate: listCircleciPipelines,
+			Hydrate:    listCircleciPipelines,
+			KeyColumns: plugin.SingleColumn("organization_slug"),
 		},
 
 		Columns: []*plugin.Column{
@@ -26,6 +28,7 @@ func tableCircleciPipeline() *plugin.Table {
 			{Name: "number", Description: "A second identifier for the pipeline.", Type: proto.ColumnType_INT},
 			{Name: "project_slug", Description: "A unique identification for the project in the form of: <vcs_type>/<org_name>/<repo_name> .", Type: proto.ColumnType_STRING},
 			{Name: "state", Description: "The state of the pipeline.", Type: proto.ColumnType_STRING},
+			{Name: "organization_slug", Description: "Organization that pipeline belongs to.", Type: proto.ColumnType_STRING, Transform: transform.FromQual("organization_slug")},
 			{Name: "trigger_parameters", Description: "Any parameter fot pipeline triggering.", Type: proto.ColumnType_JSON},
 			{Name: "trigger", Description: "What triggers the pipeline to run.", Type: proto.ColumnType_JSON},
 			{Name: "updated_at", Description: "Timestamp of when pipeline was updated.", Type: proto.ColumnType_TIMESTAMP},
@@ -38,13 +41,23 @@ func tableCircleciPipeline() *plugin.Table {
 
 func listCircleciPipelines(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
 	logger := plugin.Logger(ctx)
+	orgSlug := d.EqualsQualString("organization_slug")
+	orgSlugSplit := strings.Split(orgSlug, "/")
+	if len(orgSlugSplit) < 2 {
+		err := errors.New("Malformed input for organization_slug. Expected: {VCS}/{Org username}")
+		logger.Error("circleci_pipeline.listCircleciPipelines", "malformed_input", err)
+		return nil, err
+	}
+	vcs := orgSlugSplit[0]
+	organization := orgSlugSplit[1]
+
 	client, err := ConnectV2RestApi(ctx, d)
 	if err != nil {
 		logger.Error("circleci_pipeline.listCircleciPipelines", "connect_error", err)
 		return nil, err
 	}
 
-	pipelines, err := client.ListPipelines("gh", "fluent-cattle")
+	pipelines, err := client.ListPipelines(vcs, organization)
 	if err != nil {
 		logger.Error("circleci_pipeline.listCircleciPipelines", "list_pipelines_error", err)
 		if strings.Contains(err.Error(), "Not found") {
