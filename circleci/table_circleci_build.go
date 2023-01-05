@@ -14,7 +14,7 @@ import (
 func tableCircleciBuild() *plugin.Table {
 	return &plugin.Table{
 		Name:        "circleci_build",
-		Description: "",
+		Description: "CircleCI build",
 		List: &plugin.ListConfig{
 			Hydrate: listCircleciBuilds,
 		},
