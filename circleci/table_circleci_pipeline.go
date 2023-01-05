@@ -22,13 +22,13 @@ func tableCircleciPipeline() *plugin.Table {
 		},
 
 		Columns: []*plugin.Column{
-			{Name: "created_at", Description: "Timestamp of when pipeline was created.", Type: proto.ColumnType_TIMESTAMP},
-			{Name: "errors", Description: "A list of errors while executing pipeline's jobs.", Type: proto.ColumnType_JSON},
+			{Name: "organization_slug", Description: "Organization that pipeline belongs to, in the form of: <vcs_type>/<org_name> .", Type: proto.ColumnType_STRING, Transform: transform.FromQual("organization_slug")},
+			{Name: "project_slug", Description: "A unique identification for the project in the form of: <vcs_type>/<org_name>/<repo_name> .", Type: proto.ColumnType_STRING},
 			{Name: "id", Description: "Unique key for the pipeline.", Type: proto.ColumnType_STRING, Transform: transform.FromField("ID")},
 			{Name: "number", Description: "A second identifier for the pipeline.", Type: proto.ColumnType_INT},
-			{Name: "project_slug", Description: "A unique identification for the project in the form of: <vcs_type>/<org_name>/<repo_name> .", Type: proto.ColumnType_STRING},
+			{Name: "created_at", Description: "Timestamp of when pipeline was created.", Type: proto.ColumnType_TIMESTAMP},
+			{Name: "errors", Description: "A list of errors while executing pipeline's jobs.", Type: proto.ColumnType_JSON},
 			{Name: "state", Description: "The state of the pipeline.", Type: proto.ColumnType_STRING},
-			{Name: "organization_slug", Description: "Organization that pipeline belongs to.", Type: proto.ColumnType_STRING, Transform: transform.FromQual("organization_slug")},
 			{Name: "trigger_parameters", Description: "Any parameter fot pipeline triggering.", Type: proto.ColumnType_JSON},
 			{Name: "trigger", Description: "What triggers the pipeline to run.", Type: proto.ColumnType_JSON},
 			{Name: "updated_at", Description: "Timestamp of when pipeline was updated.", Type: proto.ColumnType_TIMESTAMP},
