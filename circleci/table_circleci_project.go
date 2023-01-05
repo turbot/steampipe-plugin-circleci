@@ -2,6 +2,7 @@ package circleci
 
 import (
 	"context"
+	"regexp"
 	"strings"
 
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
@@ -20,6 +21,11 @@ func tableCircleciProject() *plugin.Table {
 		},
 
 		Columns: []*plugin.Column{
+			{Name: "slug", Description: "A unique identification for the project in the form of: <vcs_type>/<org_name>/<repo_name> .", Type: proto.ColumnType_STRING},
+			{Name: "organization_slug", Description: "Organization that pipeline belongs to, in the form of: <vcs_type>/<org_name> .", Type: proto.ColumnType_STRING},
+			{Name: "username", Description: "Organization or person's username who owns the repository.", Type: proto.ColumnType_STRING},
+			{Name: "reponame", Description: "Name of the repository the project represent", Type: proto.ColumnType_STRING},
+			{Name: "vcs_url", Description: "URL to versioning code source.", Type: proto.ColumnType_STRING, Transform: transform.FromField("VCSURL")},
 			{Name: "branches", Description: "Branches of the repository the project represents.", Type: proto.ColumnType_JSON},
 			// {Name: "campfire_notify_prefs", Description: "", Type: proto.ColumnType_STRING},
 			// {Name: "campfire_room", Description: "", Type: proto.ColumnType_STRING},
@@ -47,7 +53,6 @@ func tableCircleciProject() *plugin.Table {
 			// {Name: "irc_server", Description: "", Type: proto.ColumnType_STRING},
 			// {Name: "irc_username", Description: "", Type: proto.ColumnType_STRING},
 			{Name: "parallel", Description: "Number of parallel execution.", Type: proto.ColumnType_INT},
-			{Name: "reponame", Description: "Name of the repository the project represent", Type: proto.ColumnType_STRING},
 			{Name: "setup", Description: "", Type: proto.ColumnType_STRING},
 			// {Name: "slack_api_token", Description: "", Type: proto.ColumnType_STRING, Transform: transform.FromField("SlackAPIToken")},
 			// {Name: "slack_channel", Description: "", Type: proto.ColumnType_STRING},
@@ -55,8 +60,6 @@ func tableCircleciProject() *plugin.Table {
 			// {Name: "slack_subdomain", Description: "", Type: proto.ColumnType_STRING},
 			// {Name: "slack_webhook_url", Description: "", Type: proto.ColumnType_STRING, Transform: transform.FromField("SlackWebhookURL")},
 			{Name: "ssh_keys", Description: "", Type: proto.ColumnType_JSON, Transform: transform.FromField("SSHKeys")},
-			{Name: "username", Description: "Organization or person's username who owns the repository.", Type: proto.ColumnType_STRING},
-			{Name: "vcs_url", Description: "URL to versioning code source.", Type: proto.ColumnType_STRING, Transform: transform.FromField("VCSURL")},
 		},
 	}
 }
@@ -80,8 +83,74 @@ func listCircleciProjects(ctx context.Context, d *plugin.QueryData, _ *plugin.Hy
 		return nil, err
 	}
 
+	githubRegex, _ := regexp.Compile("^https://github")
+	bitbucketRegex, _ := regexp.Compile("^https://bitbucket")
+
 	for _, project := range projects {
-		d.StreamListItem(ctx, project)
+
+		var vcsSlug string
+		githubMatch := githubRegex.MatchString(project.VCSURL)
+		if githubMatch {
+			vcsSlug = "gh"
+		} else {
+			bitbucketMatch := bitbucketRegex.MatchString(project.VCSURL)
+			if bitbucketMatch {
+				vcsSlug = "bb"
+			}
+		}
+
+		var organizationSlug string
+		if vcsSlug != "" {
+			organizationSlug = vcsSlug + "/" + project.Username
+		}
+
+		var projectSlug string
+		if organizationSlug != "" {
+			projectSlug = organizationSlug + "/" + project.Reponame
+		}
+
+		projectMap := map[string]interface{}{
+			"Branches":            project.Branches,
+			"CampfireNotifyPrefs": project.CampfireNotifyPrefs,
+			"CampfireRoom":        project.CampfireRoom,
+			"CampfireSubdomain":   project.CampfireSubdomain,
+			"CampfireToken":       project.CampfireToken,
+			"Compile":             project.Compile,
+			"DefaultBranch":       project.DefaultBranch,
+			"Dependencies":        project.Dependencies,
+			"Extra":               project.Extra,
+			"FeatureFlags":        project.FeatureFlags,
+			"FlowdockAPIToken":    project.FlowdockAPIToken,
+			"Followed":            project.Followed,
+			"HallNotifyPrefs":     project.HallNotifyPrefs,
+			"HallRoomAPIToken":    project.HallRoomAPIToken,
+			"HasUsableKey":        project.HasUsableKey,
+			"HerokuDeployUser":    project.HerokuDeployUser,
+			"HipchatAPIToken":     project.HipchatAPIToken,
+			"HipchatNotifyPrefs":  project.HipchatNotifyPrefs,
+			"HipchatNotify":       project.HipchatNotify,
+			"HipchatRoom":         project.HipchatRoom,
+			"IrcChannel":          project.IrcChannel,
+			"IrcKeyword":          project.IrcKeyword,
+			"IrcNotifyPrefs":      project.IrcNotifyPrefs,
+			"IrcPassword":         project.IrcPassword,
+			"IrcServer":           project.IrcServer,
+			"IrcUsername":         project.IrcUsername,
+			"Parallel":            project.Parallel,
+			"Reponame":            project.Reponame,
+			"Setup":               project.Setup,
+			"SlackAPIToken":       project.SlackAPIToken,
+			"SlackChannel":        project.SlackChannel,
+			"SlackNotifyPrefs":    project.SlackNotifyPrefs,
+			"SlackSubdomain":      project.SlackSubdomain,
+			"SlackWebhookURL":     project.SlackWebhookURL,
+			"SSHKeys":             project.SSHKeys,
+			"Username":            project.Username,
+			"OrganizationSlug":    organizationSlug,
+			"Slug":                projectSlug,
+			"VCSURL":              project.VCSURL,
+		}
+		d.StreamListItem(ctx, projectMap)
 
 		// Context can be cancelled due to manual cancellation or the limit has been hit
 		if d.RowsRemaining(ctx) == 0 {
