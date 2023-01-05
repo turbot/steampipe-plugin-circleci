@@ -27,6 +27,7 @@ func tableCircleciProject() *plugin.Table {
 			{Name: "reponame", Description: "Name of the repository the project represent", Type: proto.ColumnType_STRING},
 			{Name: "vcs_url", Description: "URL to versioning code source.", Type: proto.ColumnType_STRING, Transform: transform.FromField("VCSURL")},
 			{Name: "default_branch", Description: "Default branch name of the repository the project represents.", Type: proto.ColumnType_STRING},
+			{Name: "env_vars", Description: "Environment variables set on the project.", Type: proto.ColumnType_JSON},
 			{Name: "branches", Description: "Branches of the repository the project represents.", Type: proto.ColumnType_JSON},
 		},
 	}
@@ -77,6 +78,8 @@ func listCircleciProjects(ctx context.Context, d *plugin.QueryData, _ *plugin.Hy
 			projectSlug = organizationSlug + "/" + project.Reponame
 		}
 
+		envVars, _ := client.ListEnvVars(project.Username, project.Reponame)
+
 		projectMap := map[string]interface{}{
 			"Branches":         project.Branches,
 			"DefaultBranch":    project.DefaultBranch,
@@ -85,6 +88,7 @@ func listCircleciProjects(ctx context.Context, d *plugin.QueryData, _ *plugin.Hy
 			"OrganizationSlug": organizationSlug,
 			"Slug":             projectSlug,
 			"VCSURL":           project.VCSURL,
+			"EnvVars":          envVars,
 		}
 		d.StreamListItem(ctx, projectMap)
 
