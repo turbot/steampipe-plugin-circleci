@@ -18,18 +18,18 @@ func tableCircleciPipeline() *plugin.Table {
 		Description: "CircleCI pipelines are the highest-level unit of work, encompassing a project’s full .circleci/config.yml file.",
 		List: &plugin.ListConfig{
 			Hydrate:    listCircleciPipelines,
-			KeyColumns: plugin.SingleColumn("organization_slug"),
+			KeyColumns: plugin.SingleColumn("project_slug"),
+			// KeyColumns: plugin.AnyColumn([]string{"organization_slug", "project_slug"}),
 		},
 
 		Columns: []*plugin.Column{
-			{Name: "organization_slug", Description: "Organization that pipeline belongs to, in the form of: <vcs_type>/<org_name> .", Type: proto.ColumnType_STRING, Transform: transform.FromQual("organization_slug")},
 			{Name: "project_slug", Description: "A unique identification for the project in the form of: <vcs_type>/<org_name>/<repo_name> .", Type: proto.ColumnType_STRING},
 			{Name: "id", Description: "Unique key for the pipeline.", Type: proto.ColumnType_STRING, Transform: transform.FromField("ID")},
 			{Name: "number", Description: "A second identifier for the pipeline.", Type: proto.ColumnType_INT},
 			{Name: "created_at", Description: "Timestamp of when pipeline was created.", Type: proto.ColumnType_TIMESTAMP},
 			{Name: "errors", Description: "A list of errors while executing pipeline's jobs.", Type: proto.ColumnType_JSON},
 			{Name: "state", Description: "The state of the pipeline.", Type: proto.ColumnType_STRING},
-			{Name: "trigger_parameters", Description: "Any parameter fot pipeline triggering.", Type: proto.ColumnType_JSON},
+			{Name: "trigger_parameters", Description: "Any parameter for pipeline triggering.", Type: proto.ColumnType_JSON},
 			{Name: "trigger", Description: "What triggers the pipeline to run.", Type: proto.ColumnType_JSON},
 			{Name: "updated_at", Description: "Timestamp of when pipeline was updated.", Type: proto.ColumnType_TIMESTAMP},
 			{Name: "vcs", Description: "Version control system of the pipeline", Type: proto.ColumnType_JSON},
@@ -41,15 +41,16 @@ func tableCircleciPipeline() *plugin.Table {
 
 func listCircleciPipelines(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
 	logger := plugin.Logger(ctx)
-	orgSlug := d.EqualsQualString("organization_slug")
-	orgSlugSplit := strings.Split(orgSlug, "/")
-	if len(orgSlugSplit) < 2 {
-		err := errors.New("Malformed input for organization_slug. Expected: {VCS}/{Org username}")
+
+	projectSlug := d.EqualsQualString("project_slug")
+	projectSlugSplit := strings.Split(projectSlug, "/")
+	if len(projectSlugSplit) < 3 {
+		err := errors.New("Malformed input for project_slug. Expected: {VCS}/{Org username}/{Repository name}")
 		logger.Error("circleci_pipeline.listCircleciPipelines", "malformed_input", err)
 		return nil, err
 	}
-	vcs := orgSlugSplit[0]
-	organization := orgSlugSplit[1]
+	vcs := projectSlugSplit[0]
+	organization := projectSlugSplit[1]
 
 	client, err := ConnectV2RestApi(ctx, d)
 	if err != nil {
