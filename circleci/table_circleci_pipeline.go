@@ -19,7 +19,6 @@ func tableCircleciPipeline() *plugin.Table {
 		List: &plugin.ListConfig{
 			Hydrate:    listCircleciPipelines,
 			KeyColumns: plugin.SingleColumn("project_slug"),
-			// KeyColumns: plugin.AnyColumn([]string{"organization_slug", "project_slug"}),
 		},
 
 		Columns: []*plugin.Column{
