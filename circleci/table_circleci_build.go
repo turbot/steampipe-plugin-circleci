@@ -14,7 +14,7 @@ import (
 func tableCircleciBuild() *plugin.Table {
 	return &plugin.Table{
 		Name:        "circleci_build",
-		Description: "CircleCI build",
+		Description: "A CircleCI build is a result of a single execution of a workflow.",
 		List: &plugin.ListConfig{
 			Hydrate: listCircleciBuilds,
 		},

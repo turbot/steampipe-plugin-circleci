@@ -1,6 +1,6 @@
 # Table: circleci_build
 
-Result of a single execution of a pipeline.
+Result of a single execution of a workflow.
 
 ## Examples
 
