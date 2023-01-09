@@ -2,7 +2,7 @@
 organization: Turbot
 category: ["saas"]
 icon_url: "/images/plugins/turbot/circleci.svg"
-brand_color: "#41667E"
+brand_color: "#04AA51"
 display_name: "CircleCI"
 name: "circleci"
 description: "Steampipe plugin for querying resource projects, pipelines, builds and more from CircleCI."
