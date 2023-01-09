@@ -3,7 +3,6 @@ package circleci
 import (
 	"context"
 	"regexp"
-	"strings"
 
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
@@ -46,9 +45,6 @@ func listCircleciProjects(ctx context.Context, d *plugin.QueryData, _ *plugin.Hy
 	projects, err := client.ListProjects()
 	if err != nil {
 		logger.Error("circleci_project.listCircleciProjects", "list_projects_error", err)
-		if strings.Contains(err.Error(), "Not found") {
-			return nil, nil
-		}
 		return nil, err
 	}
 

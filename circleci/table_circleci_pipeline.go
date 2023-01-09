@@ -42,6 +42,9 @@ func listCircleciPipelines(ctx context.Context, d *plugin.QueryData, _ *plugin.H
 	logger := plugin.Logger(ctx)
 
 	projectSlug := d.EqualsQualString("project_slug")
+	if projectSlug == "" {
+		return nil, nil
+	}
 	projectSlugSplit := strings.Split(projectSlug, "/")
 	if len(projectSlugSplit) < 3 {
 		err := errors.New("Malformed input for project_slug. Expected: {VCS}/{Org username}/{Repository name}")
@@ -60,9 +63,6 @@ func listCircleciPipelines(ctx context.Context, d *plugin.QueryData, _ *plugin.H
 	pipelines, err := client.ListPipelines(vcs, organization)
 	if err != nil {
 		logger.Error("circleci_pipeline.listCircleciPipelines", "list_pipelines_error", err)
-		if strings.Contains(err.Error(), "Not found") {
-			return nil, nil
-		}
 		return nil, err
 	}
 

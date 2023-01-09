@@ -1,4 +1,4 @@
-# Table: circleci_pipeline
+# Table: circleci_workflow
 
 Workflows define a list of jobs and their run order.
 

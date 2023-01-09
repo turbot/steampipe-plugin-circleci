@@ -2,7 +2,6 @@ package circleci
 
 import (
 	"context"
-	"strings"
 
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
@@ -44,10 +43,7 @@ func listCircleciWorkflows(ctx context.Context, d *plugin.QueryData, h *plugin.H
 
 	// Empty check for pipelineId
 	if pipelineId == "" {
-		pipelineId = h.Item.(map[string]interface{})["PipelineId"].(string)
-		if pipelineId == "" {
-			return nil, nil
-		}
+		return nil, nil
 	}
 
 	client, err := ConnectV2RestApi(ctx, d)
@@ -59,9 +55,6 @@ func listCircleciWorkflows(ctx context.Context, d *plugin.QueryData, h *plugin.H
 	workflows, err := client.ListPipelinesWorkflow(pipelineId)
 	if err != nil {
 		logger.Error("circleci_workflow.listCircleciWorkflows", "list_workflows_error", err)
-		if strings.Contains(err.Error(), "Not found") {
-			return nil, nil
-		}
 		return nil, err
 	}
 
