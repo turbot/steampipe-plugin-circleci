@@ -28,7 +28,7 @@ where
   (branches -> 'main') is not null
 ```
 
-## Project's last successful build (main branch)
+### Project's last successful build (main branch)
 
 ```sql
 select
