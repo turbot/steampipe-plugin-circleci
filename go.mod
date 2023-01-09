@@ -7,7 +7,7 @@ require (
 	github.com/ettle/strcase v0.1.1
 	github.com/jszwedko/go-circleci v0.3.0
 	github.com/turbot/go-kit v0.5.0-rc.4
-	github.com/turbot/steampipe-plugin-sdk/v5 v5.0.1
+	github.com/turbot/steampipe-plugin-sdk/v5 v5.0.2
 )
 
 require (
