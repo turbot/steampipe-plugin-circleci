@@ -57,7 +57,10 @@ func ConnectV2Sdk(ctx context.Context, d *plugin.QueryData) (*graphql.Client, er
 	} else {
 		apiToken = os.Getenv("CIRCLECI_API_TOKEN")
 	}
-
+	// No creds
+	if apiToken == "" {
+		return nil, fmt.Errorf("api_token must be configured")
+	}
 	client := graphql.NewClient(http.DefaultClient, defaultHost, defaultEndpoint, apiToken, false)
 	// Save session into cache
 	d.ConnectionManager.Cache.Set(sessionCacheKey, client)
