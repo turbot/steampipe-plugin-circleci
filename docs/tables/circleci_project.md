@@ -15,7 +15,7 @@ where
   feature_flags ->> 'forks-receive-secret-env-vars' = 'true'
 ```
 
-## Projects with builds running on main branch
+### Projects with builds running on the main branch
 
 ```sql
 select
