@@ -1,6 +1,6 @@
 # Table: circleci_build
 
-Result of a single execution of a workflow.
+A CircleCI build is a result of a single execution of a workflow.
 
 ## Examples
 
@@ -24,7 +24,7 @@ order by
 limit 10;
 ```
 
-### Amount of failed builds by repository
+### Number of failed builds in a repository
 
 ```sql
 select

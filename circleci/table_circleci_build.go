@@ -76,7 +76,7 @@ func listCircleciBuilds(ctx context.Context, d *plugin.QueryData, _ *plugin.Hydr
 
 	builds, err := client.ListRecentBuilds(limit, offset)
 	if err != nil {
-		logger.Error("circleci_build.listCircleciBuilds", "list_builds_error", err)
+		logger.Error("circleci_build.listCircleciBuilds", "query_error", err)
 		if strings.Contains(err.Error(), "Not found") {
 			return nil, nil
 		}

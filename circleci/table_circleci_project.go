@@ -24,7 +24,7 @@ func tableCircleciProject() *plugin.Table {
 			{Name: "slug", Description: "A unique identification for the project in the form of: <vcs_type>/<org_name>/<repo_name> .", Type: proto.ColumnType_STRING},
 			{Name: "organization_slug", Description: "Organization that pipeline belongs to, in the form of: <vcs_type>/<org_name> .", Type: proto.ColumnType_STRING},
 			{Name: "username", Description: "Organization or person's username who owns the repository.", Type: proto.ColumnType_STRING},
-			{Name: "reponame", Description: "Name of the repository the project represent", Type: proto.ColumnType_STRING},
+			{Name: "reponame", Description: "Name of the repository the project represents.", Type: proto.ColumnType_STRING},
 			{Name: "vcs_url", Description: "URL to versioning code source.", Type: proto.ColumnType_STRING, Transform: transform.FromField("VCSURL")},
 			{Name: "default_branch", Description: "Default branch name of the repository the project represents.", Type: proto.ColumnType_STRING},
 			{Name: "env_vars", Description: "Environment variables set on the project.", Type: proto.ColumnType_JSON},

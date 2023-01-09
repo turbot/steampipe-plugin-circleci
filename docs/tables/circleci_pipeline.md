@@ -4,7 +4,7 @@ CircleCI pipelines are the highest-level unit of work, encompassing a project’
 
 ## Examples
 
-### Errored pipelines of a project
+### Error details of the pipelines of a project
 
 ```sql
 select

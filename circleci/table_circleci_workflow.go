@@ -21,9 +21,9 @@ func tableCircleciWorkflow() *plugin.Table {
 		},
 
 		Columns: []*plugin.Column{
-			{Name: "canceled_by", Description: "Id of the user who canceled the workflow.", Type: proto.ColumnType_STRING},
+			{Name: "canceled_by", Description: "ID of the user who canceled the workflow.", Type: proto.ColumnType_STRING},
 			{Name: "created_at", Description: "Timestamp of when workflow was created.", Type: proto.ColumnType_TIMESTAMP},
-			{Name: "errored_by", Description: "Id of the user who caused the workflow to error.", Type: proto.ColumnType_STRING},
+			{Name: "errored_by", Description: "ID of the user who caused the workflow to error.", Type: proto.ColumnType_STRING},
 			{Name: "id", Description: "Unique key for the workflow.", Type: proto.ColumnType_STRING, Transform: transform.FromField("ID")},
 			{Name: "name", Description: "Human readable name of the workflow.", Type: proto.ColumnType_STRING},
 			{Name: "pipeline_id", Description: "Unique key for the pipeline.", Type: proto.ColumnType_STRING, Transform: transform.FromField("PipelineID")},
