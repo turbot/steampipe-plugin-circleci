@@ -27,7 +27,10 @@ func ConnectV1Sdk(ctx context.Context, d *plugin.QueryData) (*circleci.Client, e
 	} else {
 		apiToken = os.Getenv("CIRCLECI_API_TOKEN")
 	}
-
+	// No creds
+	if apiToken == "" {
+		return nil, fmt.Errorf("api_token must be configured")
+	}
 	client := &circleci.Client{Token: apiToken}
 	// Save session into cache
 	d.ConnectionManager.Cache.Set(sessionCacheKey, client)
