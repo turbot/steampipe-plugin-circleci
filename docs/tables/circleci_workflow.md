@@ -4,7 +4,7 @@ Workflows define a list of jobs and their run order.
 
 ## Examples
 
-### Workflows statuses of a pipeline
+### Workflow status of a pipeline
 
 ```sql
 select
