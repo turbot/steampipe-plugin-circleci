@@ -19,7 +19,7 @@ order by
   created_at desc;
 ```
 
-### Duration of workflows of a pipeline
+### Workflow duration of a pipeline
 
 ```sql
 select
