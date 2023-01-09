@@ -86,7 +86,10 @@ func ConnectV2RestApi(ctx context.Context, d *plugin.QueryData) (*rest.Client, e
 	} else {
 		apiToken = os.Getenv("CIRCLECI_API_TOKEN")
 	}
-
+	// No creds
+	if apiToken == "" {
+		return nil, fmt.Errorf("api_token must be configured")
+	}
 	client := rest.New(rest.Config{
 		Token: apiToken,
 		URL:   defaultHost,
