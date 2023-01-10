@@ -70,22 +70,29 @@ func listCircleciBuilds(ctx context.Context, d *plugin.QueryData, _ *plugin.Hydr
 		return nil, err
 	}
 
-	limit := -1
+	limit := 30
 	offset := 0
 
-	builds, err := client.ListRecentBuilds(limit, offset)
-	if err != nil {
-		logger.Error("circleci_build.listCircleciBuilds", "query_error", err)
-		return nil, err
-	}
-
-	for _, build := range builds {
-		d.StreamListItem(ctx, build)
-
-		// Context can be cancelled due to manual cancellation or the limit has been hit
-		if d.RowsRemaining(ctx) == 0 {
-			return nil, nil
+	for {
+		builds, err := client.ListRecentBuilds(limit, offset)
+		if err != nil {
+			logger.Error("circleci_build.listCircleciBuilds", "query_error", err)
+			return nil, err
 		}
+
+		for _, build := range builds {
+			d.StreamListItem(ctx, build)
+
+			// Context can be cancelled due to manual cancellation or the limit has been hit
+			if d.RowsRemaining(ctx) == 0 {
+				return nil, nil
+			}
+		}
+
+		if len(builds) < limit {
+			break
+		}
+		offset += 1
 	}
 
 	return nil, err
