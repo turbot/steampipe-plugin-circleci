@@ -39,7 +39,6 @@ order by
 | fluent-cattle/sp-plugin-test | main                   | success | https://circleci.com/gh/fluent-cattle/sp-plugin-test/35 |
 | hardy-cub/famous-frog        | circleci-project-setup | success | https://circleci.com/gh/hardy-cub/famous-frog/2         |
 +------------------------------+------------------------+---------+---------------------------------------------------------+
-
 ```
 
 ## Documentation
@@ -60,25 +59,24 @@ steampipe plugin install circleci
 
 | Item        | Description                                                                                                                                                                                                                                                                                 |
 |-------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Credentials | CircleCI requires an [API token](https://www.circleci.com/doc/book/using/using-credentials/) for all requests.                                                                                                                                                                                 |
+| Credentials | CircleCI requires an [API token](https://circleci.com/docs/managing-api-tokens/#creating-a-personal-api-token) for all requests.                                                                                                                                                                                 |
 | Permissions | API tokens have the same permissions as the user who creates them, and if the user permissions change, the API token permissions also change.                                                                                                                                               |
 | Radius      | Each connection represents a single CircleCI Installation.                                                                                                                                                                                                                                   |
-| Resolution  | 1. With configuration provided in connection in steampipe _**.spc**_ config file.<br />2. With circleci environment variables.<br />3. An circleci.yaml file in a .circleci folder in the current user's home directory _**(~/.circleci/circleci.yaml or %userprofile\.circleci\circleci.yaml)**_. |
+| Resolution  | 1. Credentials explicitly set in a steampipe config file (`~/.steampipe/config/circleci.spc`)<br />2. Credentials specified in environment variables, e.g., `CIRCLECI_TOKEN`. |
 
 ### Configuration
 
-Installing the latest circleci plugin will create a config file (~/.steampipe/config/circleci.spc) with a single connection named circleci:
+Installing the latest circleci plugin will create a config file (~/.steampipe/config/circleci.spc) with a single connection named `circleci`:
 
 ```hcl
 connection "circleci" {
   plugin = "circleci"
 
   # Get your API token from CircleCI https://circleci.com/docs/api-developers-guide/#add-an-api-token
+  # This can also be set via the `CIRCLECI_TOKEN` environment variable.
   # api_token = "1234ee38fc6943f6cb9537a564e9a6dac6ef1463"
 }
 ```
-
-By default, all options are commented out in the default connection, thus Steampipe will resolve your credentials using the same order as mentioned in [Credentials](#credentials). This provides a quick way to get started with Steampipe, but you will probably want to customize your experience using configuration options for querying multiple organizations, configuring credentials from your circleci configuration files, [environment variables](#credentials-from-environment-variables), etc.
 
 ### Credentials from Environment Variables
 
