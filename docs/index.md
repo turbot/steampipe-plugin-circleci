@@ -73,20 +73,11 @@ connection "circleci" {
   plugin = "circleci"
 
   # Get your API token from CircleCI https://circleci.com/docs/api-developers-guide/#add-an-api-token
-
   # api_token = "1234ee38fc6943f6cb9537a564e9a6dac6ef1463"
 }
 ```
 
 By default, all options are commented out in the default connection, thus Steampipe will resolve your credentials using the same order as mentioned in [Credentials](#credentials). This provides a quick way to get started with Steampipe, but you will probably want to customize your experience using configuration options for querying multiple organizations, configuring credentials from your circleci configuration files, [environment variables](#credentials-from-environment-variables), etc.
-
-
-## Get involved
-
-- Open source: https://github.com/turbot/steampipe-plugin-circleci
-- Community: [Slack Channel](https://steampipe.io/community/join)
-
-## Configuring CircleCI Credentials
 
 ### Credentials from Environment Variables
 
@@ -97,3 +88,8 @@ The CircleCI plugin will use the standard CircleCI environment variables to obta
 ```sh
 export CIRCLE_TOKEN=1234ee38fc6943f6cb9537a564e9a6dac6ef1463
 ```
+
+## Get involved
+
+- Open source: https://github.com/turbot/steampipe-plugin-circleci
+- Community: [Slack Channel](https://steampipe.io/community/join)
