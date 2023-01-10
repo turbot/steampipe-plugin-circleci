@@ -4,17 +4,6 @@ A CircleCI project shares the name of the code repository for which it automates
 
 ## Examples
 
-### Projects that share secret environment variables with forks
-
-```sql
-select
-  concat(username,'/',reponame) as repository
-from
-  circleci_project
-where
-  feature_flags ->> 'forks-receive-secret-env-vars' = 'true'
-```
-
 ### Projects with builds running on the main branch
 
 ```sql
@@ -33,7 +22,7 @@ where
 ```sql
 select
   concat(username,'/',reponame) as repository,
-  branches -> 'main' -> 'last_success' -> 'build_num'
+  branches -> 'main' -> 'last_success' -> 'build_num' as build_num
 from
   circleci_project
 where
