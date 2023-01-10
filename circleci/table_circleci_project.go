@@ -2,7 +2,6 @@ package circleci
 
 import (
 	"context"
-	"regexp"
 
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
@@ -49,32 +48,9 @@ func listCircleciProjects(ctx context.Context, d *plugin.QueryData, _ *plugin.Hy
 		return nil, err
 	}
 
-	githubRegex, _ := regexp.Compile("^https://github")
-	bitbucketRegex, _ := regexp.Compile("^https://bitbucket")
-
 	for _, project := range projects {
 
-		var vcsSlug string
-		githubMatch := githubRegex.MatchString(project.VCSURL)
-		if githubMatch {
-			vcsSlug = "gh"
-		} else {
-			bitbucketMatch := bitbucketRegex.MatchString(project.VCSURL)
-			if bitbucketMatch {
-				vcsSlug = "bb"
-			}
-		}
-
-		var organizationSlug string
-		if vcsSlug != "" {
-			organizationSlug = vcsSlug + "/" + project.Username
-		}
-
-		var projectSlug string
-		if organizationSlug != "" {
-			projectSlug = organizationSlug + "/" + project.Reponame
-		}
-
+		organizationSlug, projectSlug := Slugify(project.VCSURL, project.Username, project.Reponame)
 		envVars, _ := client.ListEnvVars(project.Username, project.Reponame)
 		checkoutKeys, _ := client.ListCheckoutKeys(project.Username, project.Reponame)
 

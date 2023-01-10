@@ -1,50 +1,39 @@
 package circleci
 
 import (
-	"fmt"
-
-	"github.com/ettle/strcase"
-	"github.com/turbot/go-kit/helpers"
-	"github.com/turbot/go-kit/types"
-	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
-	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
-)
-
-const (
-	filterTimeFormat = "2006-01-02T15:04:05.000Z"
-	titleDescription = "The title of the resource."
+	"regexp"
 )
 
 var (
-	// Filters sympol - comparison operator map for circleci
-	operatorsMap = map[string]string{
-		"=":  "eq",
-		">=": "ge",
-		">":  "gt",
-		"<=": "le",
-		"<":  "lt",
-		"<>": "ne",
-	}
+	githubRegex, _    = regexp.Compile("^https://github")
+	bitbucketRegex, _ = regexp.Compile("^https://bitbucket")
 )
 
-func getListValues(listValue *proto.QualValueList) []*string {
-	values := make([]*string, 0)
-	for _, value := range listValue.Values {
-		values = append(values, types.String(value.GetStringValue()))
-	}
-	return values
-}
-
-//// other useful functions
-
-func buildQueryFilter(equalQuals plugin.KeyColumnEqualsQualMap, filterKeys []string) []string {
-	filters := []string{}
-
-	for k, v := range equalQuals {
-		if v != nil && helpers.StringSliceContains(filterKeys, k) {
-			filters = append(filters, fmt.Sprintf("%s eq \"%s\"", strcase.ToCamel(k), v.GetStringValue()))
+func Slugify(vcsUrl, vcsUserName, vcsRepoName string) (string, string) {
+	var vcsSlug string
+	githubMatch := githubRegex.MatchString(vcsUrl)
+	if githubMatch {
+		vcsSlug = "gh"
+	} else {
+		bitbucketMatch := bitbucketRegex.MatchString(vcsUrl)
+		if bitbucketMatch {
+			vcsSlug = "bb"
 		}
 	}
 
-	return filters
+	var organizationSlug string
+	if vcsSlug != "" {
+		organizationSlug = vcsSlug + "/" + vcsUserName
+	}
+
+	if vcsRepoName == "" {
+		return organizationSlug, ""
+	}
+
+	var projectSlug string
+	if organizationSlug != "" {
+		projectSlug = organizationSlug + "/" + vcsRepoName
+	}
+
+	return organizationSlug, projectSlug
 }
