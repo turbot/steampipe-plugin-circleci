@@ -20,15 +20,14 @@ For example:
 
 ```sql
 select
-  username as "organization",
-  reponame,
+  concat(username, '/', reponame) as repository,
   branch,
-  build_time_millis,
   status,
-  author_name,
   build_url
 from
-  circleci_build;
+  circleci_build
+order by
+  stop_time desc limit 10;
 ```
 
 ```
@@ -84,7 +83,7 @@ By default, all options are commented out in the default connection, thus Steamp
 The CircleCI plugin will use the standard CircleCI environment variables to obtain credentials **only if other arguments (`api_token`) are not specified** in the connection:
 
 ```sh
-export CIRCLECI_API_TOKEN=1234ee38fc6943f6cb9537a564e9a6dac6ef1463
+export CIRCLECI_TOKEN=1234ee38fc6943f6cb9537a564e9a6dac6ef1463
 ```
 
 ## Get involved

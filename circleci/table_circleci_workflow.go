@@ -10,7 +10,7 @@ import (
 
 //// TABLE DEFINITION
 
-func tableCircleciWorkflow() *plugin.Table {
+func tableCircleCIWorkflow() *plugin.Table {
 	return &plugin.Table{
 		Name:        "circleci_workflow",
 		Description: "Workflows define a list of jobs and their run order.",

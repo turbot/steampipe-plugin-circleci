@@ -19,10 +19,10 @@ func Plugin(ctx context.Context) *plugin.Plugin {
 			Schema:      ConfigSchema,
 		},
 		TableMap: map[string]*plugin.Table{
-			"circleci_build":    tableCircleciBuild(),
-			"circleci_pipeline": tableCircleciPipeline(),
-			"circleci_project":  tableCircleciProject(),
-			"circleci_workflow": tableCircleciWorkflow(),
+			"circleci_build":    tableCircleCIBuild(),
+			"circleci_pipeline": tableCircleCIPipeline(),
+			"circleci_project":  tableCircleCIProject(),
+			"circleci_workflow": tableCircleCIWorkflow(),
 		},
 	}
 

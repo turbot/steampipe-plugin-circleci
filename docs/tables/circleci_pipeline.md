@@ -1,6 +1,6 @@
 # Table: circleci_pipeline
 
-CircleCI pipelines are the highest-level unit of work, encompassing a project’s full .circleci/config.yml file.
+CircleCI pipelines are the highest-level unit of work, encompassing a project’s full `.circleci/config.yml` file.
 
 ## Examples
 
@@ -14,9 +14,9 @@ select
 from
   circleci_pipeline
 where
-  project_slug = 'gh/fluent-cattle/sp-plugin-test' and
-  errors is not null and
-  jsonb_array_length(errors) > 0;
+  project_slug = 'gh/fluent-cattle/sp-plugin-test'
+  and errors is not null
+  and jsonb_array_length(errors) > 0;
 ```
 
 ### Number of pipelines per project
@@ -27,10 +27,9 @@ select
   count(pl.*)
 from
   circleci_project pr
-join
-  circleci_pipeline pl
-on
-  pr.slug = pl.project_slug
+  join
+    circleci_pipeline pl
+    on pr.slug = pl.project_slug
 group by
   pr.slug;
 ```

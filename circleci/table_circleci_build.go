@@ -10,7 +10,7 @@ import (
 
 //// TABLE DEFINITION
 
-func tableCircleciBuild() *plugin.Table {
+func tableCircleCIBuild() *plugin.Table {
 	return &plugin.Table{
 		Name:        "circleci_build",
 		Description: "A CircleCI build is a result of a single execution of a workflow.",

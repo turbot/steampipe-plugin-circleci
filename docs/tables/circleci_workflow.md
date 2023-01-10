@@ -25,7 +25,12 @@ order by
 select
   id,
   project_slug,
-  extract(seconds from (stopped_at - created_at)) as duration_in_seconds
+  extract(seconds
+from
+  (
+    stopped_at - created_at
+  )
+) as duration_in_seconds
 from
   circleci_workflow
 where

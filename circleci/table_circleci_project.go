@@ -10,7 +10,7 @@ import (
 
 //// TABLE DEFINITION
 
-func tableCircleciProject() *plugin.Table {
+func tableCircleCIProject() *plugin.Table {
 	return &plugin.Table{
 		Name:        "circleci_project",
 		Description: "A CircleCI project shares the name of the code repository for which it automates workflows, tests, and deployment.",

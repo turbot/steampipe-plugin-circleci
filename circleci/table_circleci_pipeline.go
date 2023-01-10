@@ -12,7 +12,7 @@ import (
 
 //// TABLE DEFINITION
 
-func tableCircleciPipeline() *plugin.Table {
+func tableCircleCIPipeline() *plugin.Table {
 	return &plugin.Table{
 		Name:        "circleci_pipeline",
 		Description: "CircleCI pipelines are the highest-level unit of work, encompassing a project’s full .circleci/config.yml file.",

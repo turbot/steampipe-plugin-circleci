@@ -8,7 +8,7 @@ import (
 
 	"github.com/CircleCI-Public/circleci-cli/api/graphql"
 	"github.com/jszwedko/go-circleci"
-	"github.com/turbot/steampipe-plugin-circleci/circleci/rest"
+	"github.com/turbot/steampipe-plugin-circleci/rest"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 )
 
@@ -26,7 +26,7 @@ func ConnectV1Sdk(ctx context.Context, d *plugin.QueryData) (*circleci.Client, e
 	if circleciConfig.ApiToken != nil {
 		apiToken = *circleciConfig.ApiToken
 	} else {
-		apiToken = os.Getenv("CIRCLECI_API_TOKEN")
+		apiToken = os.Getenv("CIRCLECI_TOKEN")
 	}
 	// No creds
 	if apiToken == "" {
@@ -56,7 +56,7 @@ func ConnectV2Sdk(ctx context.Context, d *plugin.QueryData) (*graphql.Client, er
 	if circleciConfig.ApiToken != nil {
 		apiToken = *circleciConfig.ApiToken
 	} else {
-		apiToken = os.Getenv("CIRCLECI_API_TOKEN")
+		apiToken = os.Getenv("CIRCLECI_TOKEN")
 	}
 	// No creds
 	if apiToken == "" {
@@ -85,7 +85,7 @@ func ConnectV2RestApi(ctx context.Context, d *plugin.QueryData) (*rest.Client, e
 	if circleciConfig.ApiToken != nil {
 		apiToken = *circleciConfig.ApiToken
 	} else {
-		apiToken = os.Getenv("CIRCLECI_API_TOKEN")
+		apiToken = os.Getenv("CIRCLECI_TOKEN")
 	}
 	// No creds
 	if apiToken == "" {

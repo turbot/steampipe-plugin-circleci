@@ -21,15 +21,14 @@ Run a query:
 
 ```sql
 select
-  username as "organization",
-  reponame,
+  concat(username, '/', reponame) as repository,
   branch,
-  build_time_millis,
   status,
-  author_name,
   build_url
 from
-  circleci_build;
+  circleci_build
+order by
+  stop_time desc limit 10;
 ```
 
 ## Developing
