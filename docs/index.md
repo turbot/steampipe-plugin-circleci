@@ -83,10 +83,8 @@ By default, all options are commented out in the default connection, thus Steamp
 
 The CircleCI plugin will use the standard CircleCI environment variables to obtain credentials **only if other arguments (`api_token`) are not specified** in the connection:
 
-#### API Token
-
 ```sh
-export CIRCLE_TOKEN=1234ee38fc6943f6cb9537a564e9a6dac6ef1463
+export CIRCLECI_API_TOKEN=1234ee38fc6943f6cb9537a564e9a6dac6ef1463
 ```
 
 ## Get involved
