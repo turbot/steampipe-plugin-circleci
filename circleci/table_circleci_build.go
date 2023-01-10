@@ -15,18 +15,17 @@ func tableCircleCIBuild() *plugin.Table {
 		Name:        "circleci_build",
 		Description: "A CircleCI build is a result of a single execution of a workflow.",
 		List: &plugin.ListConfig{
-			Hydrate: listCircleciBuilds,
+			Hydrate: listCircleCIBuilds,
 		},
 
 		Columns: []*plugin.Column{
 			{Name: "build_num", Description: "Sequential number of build.", Type: proto.ColumnType_INT},
-			{Name: "project_slug", Description: "A unique identification for the project in the form of: <vcs_type>/<org_name>/<repo_name> .", Type: proto.ColumnType_STRING},
-			{Name: "organization_slug", Description: "Organization that pipeline belongs to, in the form of: <vcs_type>/<org_name> .", Type: proto.ColumnType_STRING},
+			{Name: "project_slug", Description: "A unique identification for the project in the form of: <vcs_type>/<org_name>/<repo_name>.", Type: proto.ColumnType_STRING},
+			{Name: "organization_slug", Description: "Organization that pipeline belongs to, in the form of: <vcs_type>/<org_name>.", Type: proto.ColumnType_STRING},
 			{Name: "reponame", Description: "Repository name.", Type: proto.ColumnType_STRING},
 			{Name: "username", Description: "Organization username.", Type: proto.ColumnType_STRING},
-			{Name: "branch", Description: "Branch the code was built.", Type: proto.ColumnType_STRING},
+			{Name: "branch", Description: "Branch used to build the code.", Type: proto.ColumnType_STRING},
 			{Name: "build_url", Description: "Build URL.", Type: proto.ColumnType_STRING, Transform: transform.FromField("BuildURL")},
-
 			{Name: "status", Description: "Status of the build.", Type: proto.ColumnType_STRING},
 			{Name: "all_commit_details", Description: "Commit details.", Type: proto.ColumnType_JSON},
 			{Name: "author_email", Description: "Author email.", Type: proto.ColumnType_STRING},
@@ -47,7 +46,7 @@ func tableCircleCIBuild() *plugin.Table {
 			{Name: "previous", Description: "Previous build.", Type: proto.ColumnType_JSON},
 			{Name: "queued_at", Description: "Timestamp of when the build was queued.", Type: proto.ColumnType_TIMESTAMP},
 			{Name: "retries", Description: "Number of build retries.", Type: proto.ColumnType_JSON},
-			{Name: "retry_of", Description: "Precedent build of the retrial.", Type: proto.ColumnType_INT},
+			{Name: "retry_of", Description: "Precedent build of the retry.", Type: proto.ColumnType_INT},
 			{Name: "ssh_users", Description: "SSH users with access to the build, if any.", Type: proto.ColumnType_JSON, Transform: transform.FromField("SSHUsers")},
 			{Name: "start_time", Description: "Start time of the build.", Type: proto.ColumnType_TIMESTAMP},
 			{Name: "stop_time", Description: "Stop time of the build.", Type: proto.ColumnType_TIMESTAMP},
@@ -58,18 +57,18 @@ func tableCircleCIBuild() *plugin.Table {
 			{Name: "vcs_revision", Description: "VCS Revision.", Type: proto.ColumnType_STRING},
 			{Name: "vcs_tag", Description: "VCS Tag.", Type: proto.ColumnType_STRING},
 			{Name: "vcs_url", Description: "VCS URL.", Type: proto.ColumnType_STRING, Transform: transform.FromField("VCSURL")},
-			{Name: "workflow", Description: "Workflow which ran the build.", Type: proto.ColumnType_JSON, Transform: transform.FromField("workflows")},
+			{Name: "workflows", Description: "Workflow which ran the build.", Type: proto.ColumnType_JSON, Transform: transform.FromField("workflows")},
 		},
 	}
 }
 
 //// LIST FUNCTION
 
-func listCircleciBuilds(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
+func listCircleCIBuilds(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
 	logger := plugin.Logger(ctx)
 	client, err := ConnectV1Sdk(ctx, d)
 	if err != nil {
-		logger.Error("circleci_build.listCircleciBuilds", "connect_error", err)
+		logger.Error("circleci_build.listCircleCIBuilds", "connect_error", err)
 		return nil, err
 	}
 
@@ -79,7 +78,7 @@ func listCircleciBuilds(ctx context.Context, d *plugin.QueryData, _ *plugin.Hydr
 	for {
 		builds, err := client.ListRecentBuilds(limit, offset)
 		if err != nil {
-			logger.Error("circleci_build.listCircleciBuilds", "query_error", err)
+			logger.Error("circleci_build.listCircleCIBuilds", "query_error", err)
 			return nil, err
 		}
 

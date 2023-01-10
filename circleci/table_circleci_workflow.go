@@ -15,7 +15,7 @@ func tableCircleCIWorkflow() *plugin.Table {
 		Name:        "circleci_workflow",
 		Description: "Workflows define a list of jobs and their run order.",
 		List: &plugin.ListConfig{
-			Hydrate:    listCircleciWorkflows,
+			Hydrate:    listCircleCIWorkflows,
 			KeyColumns: plugin.SingleColumn("pipeline_id"),
 		},
 
@@ -27,9 +27,9 @@ func tableCircleCIWorkflow() *plugin.Table {
 			{Name: "name", Description: "Human readable name of the workflow.", Type: proto.ColumnType_STRING},
 			{Name: "pipeline_id", Description: "Unique key for the pipeline.", Type: proto.ColumnType_STRING, Transform: transform.FromField("PipelineID")},
 			{Name: "pipeline_number", Description: "A second identifier for the pipeline.", Type: proto.ColumnType_INT},
-			{Name: "project_slug", Description: "A unique identification for the project in the form of: <vcs_type>/<org_name>/<repo_name> .", Type: proto.ColumnType_STRING},
+			{Name: "project_slug", Description: "A unique identification for the project in the form of: <vcs_type>/<org_name>/<repo_name>.", Type: proto.ColumnType_STRING},
 			{Name: "started_by", Description: "Id of the user who started the workflow.", Type: proto.ColumnType_STRING},
-			{Name: "status", Description: "Workflow status", Type: proto.ColumnType_STRING},
+			{Name: "status", Description: "Workflow status.", Type: proto.ColumnType_STRING},
 			{Name: "stopped_at", Description: "Timestamp of when workflow was stopped.", Type: proto.ColumnType_TIMESTAMP},
 		},
 	}
@@ -37,7 +37,7 @@ func tableCircleCIWorkflow() *plugin.Table {
 
 //// LIST FUNCTION
 
-func listCircleciWorkflows(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listCircleCIWorkflows(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
 	logger := plugin.Logger(ctx)
 	pipelineId := d.EqualsQualString("pipeline_id")
 
@@ -48,13 +48,13 @@ func listCircleciWorkflows(ctx context.Context, d *plugin.QueryData, h *plugin.H
 
 	client, err := ConnectV2RestApi(ctx, d)
 	if err != nil {
-		logger.Error("circleci_workflow.listCircleciWorkflows", "connect_error", err)
+		logger.Error("circleci_workflow.listCircleCIWorkflows", "connect_error", err)
 		return nil, err
 	}
 
 	workflows, err := client.ListPipelinesWorkflow(pipelineId)
 	if err != nil {
-		logger.Error("circleci_workflow.listCircleciWorkflows", "list_workflows_error", err)
+		logger.Error("circleci_workflow.listCircleCIWorkflows", "list_workflows_error", err)
 		return nil, err
 	}
 
