@@ -31,13 +31,15 @@ order by
 ```
 
 ```
-+---------------+----------------+------------------------+-------------------+---------+-----------------+--------------------------------------------------------+
-| organization  | reponame       | branch                 | build_time_millis | status  | author_name     | build_url                                              |
-+---------------+----------------+------------------------+-------------------+---------+-----------------+--------------------------------------------------------+
-| fluent-cattle | warm-beagle    | circleci-project-setup | 2794              | success | Noah            | https://circleci.com/gh/fluent-cattle/warm-beagle/52   |
-| funny-liger   | sp-plugin-test | circleci-project-setup | 604185            | success | Luis            | https://circleci.com/gh/funny-liger/sp-plugin-test/90  |
-| fluent-cattle | sp-plugin-test | circleci-project-setup | 6696              | failed  | Oliver          | https://circleci.com/gh/fluent-cattle/sp-plugin-test/8 |
-+---------------+----------------+------------------------+-------------------+---------+-----------------+--------------------------------------------------------+
++------------------------------+------------------------+---------+---------------------------------------------------------+
+| repository                   | branch                 | status  | build_url                                               |
++------------------------------+------------------------+---------+---------------------------------------------------------+
+| fluent-cattle/sp-plugin-test | main                   | failed  | https://circleci.com/gh/fluent-cattle/sp-plugin-test/36 |
+| fluent-cattle/prime-osprey   | circleci-project-setup | success | https://circleci.com/gh/fluent-cattle/prime-osprey/1    |
+| fluent-cattle/sp-plugin-test | main                   | success | https://circleci.com/gh/fluent-cattle/sp-plugin-test/35 |
+| hardy-cub/famous-frog        | circleci-project-setup | success | https://circleci.com/gh/hardy-cub/famous-frog/2         |
++------------------------------+------------------------+---------+---------------------------------------------------------+
+
 ```
 
 ## Documentation

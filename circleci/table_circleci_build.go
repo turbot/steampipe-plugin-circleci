@@ -72,71 +72,65 @@ func listCircleCIBuilds(ctx context.Context, d *plugin.QueryData, _ *plugin.Hydr
 		return nil, err
 	}
 
-	limit := 30
+	// limit -1 means it will use the SDK built-in pagination
+	limit := -1
 	offset := 0
 
-	for {
-		builds, err := client.ListRecentBuilds(limit, offset)
-		if err != nil {
-			logger.Error("circleci_build.listCircleCIBuilds", "query_error", err)
-			return nil, err
-		}
+	builds, err := client.ListRecentBuilds(limit, offset)
+	if err != nil {
+		logger.Error("circleci_build.listCircleciBuilds", "query_error", err)
+		return nil, err
+	}
 
-		for _, build := range builds {
-			organizationSlug, projectSlug := Slugify(build.VCSURL, build.Username, build.Reponame)
-			buildMap := map[string]interface{}{
-				"OrganizationSlug":   organizationSlug,
-				"ProjectSlug":        projectSlug,
-				"BuildNum":           build.BuildNum,
-				"Reponame":           build.Reponame,
-				"Username":           build.Username,
-				"Branch":             build.Branch,
-				"AllCommitDetails":   build.AllCommitDetails,
-				"AuthorEmail":        build.AuthorEmail,
-				"AuthorName":         build.AuthorName,
-				"BuildParameters":    build.BuildParameters,
-				"BuildTimeMillis":    build.BuildTimeMillis,
-				"BuildURL":           build.BuildURL,
-				"Canceled":           build.Canceled,
-				"CommitterDate":      build.CommitterDate,
-				"CommitterEmail":     build.CommitterEmail,
-				"CommitterName":      build.CommitterName,
-				"Failed":             build.Failed,
-				"InfrastructureFail": build.InfrastructureFail,
-				"IsFirstGreenBuild":  build.IsFirstGreenBuild,
-				"Lifecycle":          build.Lifecycle,
-				"Outcome":            build.Outcome,
-				"Parallel":           build.Parallel,
-				"Platform":           build.Platform,
-				"Previous":           build.Previous,
-				"QueuedAt":           build.QueuedAt,
-				"Retries":            build.Retries,
-				"RetryOf":            build.RetryOf,
-				"SSHUsers":           build.SSHUsers,
-				"StartTime":          build.StartTime,
-				"Status":             build.Status,
-				"StopTime":           build.StopTime,
-				"Subject":            build.Subject,
-				"Timedout":           build.Timedout,
-				"UsageQueuedAt":      build.UsageQueuedAt,
-				"User":               build.User,
-				"VcsRevision":        build.VcsRevision,
-				"VcsTag":             build.VcsTag,
-				"VCSURL":             build.VCSURL,
-				"Workflows":          build.Workflows,
-			}
-			d.StreamListItem(ctx, buildMap)
-
-			// Context can be cancelled due to manual cancellation or the limit has been hit
-			if d.RowsRemaining(ctx) == 0 {
-				return nil, nil
-			}
+	for _, build := range builds {
+		organizationSlug, projectSlug := Slugify(build.VCSURL, build.Username, build.Reponame)
+		buildMap := map[string]interface{}{
+			"OrganizationSlug":   organizationSlug,
+			"ProjectSlug":        projectSlug,
+			"BuildNum":           build.BuildNum,
+			"Reponame":           build.Reponame,
+			"Username":           build.Username,
+			"Branch":             build.Branch,
+			"AllCommitDetails":   build.AllCommitDetails,
+			"AuthorEmail":        build.AuthorEmail,
+			"AuthorName":         build.AuthorName,
+			"BuildParameters":    build.BuildParameters,
+			"BuildTimeMillis":    build.BuildTimeMillis,
+			"BuildURL":           build.BuildURL,
+			"Canceled":           build.Canceled,
+			"CommitterDate":      build.CommitterDate,
+			"CommitterEmail":     build.CommitterEmail,
+			"CommitterName":      build.CommitterName,
+			"Failed":             build.Failed,
+			"InfrastructureFail": build.InfrastructureFail,
+			"IsFirstGreenBuild":  build.IsFirstGreenBuild,
+			"Lifecycle":          build.Lifecycle,
+			"Outcome":            build.Outcome,
+			"Parallel":           build.Parallel,
+			"Platform":           build.Platform,
+			"Previous":           build.Previous,
+			"QueuedAt":           build.QueuedAt,
+			"Retries":            build.Retries,
+			"RetryOf":            build.RetryOf,
+			"SSHUsers":           build.SSHUsers,
+			"StartTime":          build.StartTime,
+			"Status":             build.Status,
+			"StopTime":           build.StopTime,
+			"Subject":            build.Subject,
+			"Timedout":           build.Timedout,
+			"UsageQueuedAt":      build.UsageQueuedAt,
+			"User":               build.User,
+			"VcsRevision":        build.VcsRevision,
+			"VcsTag":             build.VcsTag,
+			"VCSURL":             build.VCSURL,
+			"Workflows":          build.Workflows,
 		}
+		d.StreamListItem(ctx, buildMap)
 
-		if len(builds) < limit {
-			break
+		// Context can be cancelled due to manual cancellation or the limit has been hit
+		if d.RowsRemaining(ctx) == 0 {
+			return nil, nil
 		}
-		offset += 1
 	}
 
 	return nil, err
