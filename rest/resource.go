@@ -78,3 +78,15 @@ type Context struct {
 	Name      string    `json:"name"`
 	CreatedAt time.Time `json:"created_at"`
 }
+
+type EnvironmentVariableResponse struct {
+	Items         []EnvironmentVariable `json:"items"`
+	NextPageToken string                `json:"next_page_token"`
+}
+
+type EnvironmentVariable struct {
+	ContextID string    `json:"context_id"`
+	Variable  string    `json:"variable"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}

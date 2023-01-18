@@ -14,7 +14,7 @@ import (
 func tableCircleCIOrganization() *plugin.Table {
 	return &plugin.Table{
 		Name:        "circleci_organization",
-		Description: "CircleCI organizations are the highest-level unit of work, encompassing a project’s full .circleci/config.yml file.",
+		Description: "CircleCI organization is a representation of a VCS account ownership.",
 		List: &plugin.ListConfig{
 			Hydrate: listCircleCIOrganizations,
 		},

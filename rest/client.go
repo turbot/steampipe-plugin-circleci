@@ -216,6 +216,31 @@ func (c *Client) ListContexts(orgSlug, pageToken string) (*ContextResponse, erro
 	return contextResp, nil
 }
 
+func (c *Client) ListEnvironmentVariable(contextId, pageToken string) (*EnvironmentVariableResponse, error) {
+	u := &url.URL{
+		Path: fmt.Sprintf("context/%s/environment-variable", contextId),
+	}
+	values := u.Query()
+	if pageToken != "" {
+		values.Add("page-token", pageToken)
+	}
+	u.RawQuery = values.Encode()
+
+	req, err := c.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	envVarResp := &EnvironmentVariableResponse{}
+
+	_, err = c.DoRequest(req, envVarResp)
+	if err != nil {
+		return nil, err
+	}
+
+	return envVarResp, nil
+}
+
 func (c *Client) ListPipelinesWorkflow(pipelineId string) (*WorkflowResponse, error) {
 	u := &url.URL{
 		Path: fmt.Sprintf("pipeline/%s/workflow", pipelineId),
