@@ -166,6 +166,28 @@ func (c *Client) ListPipelines(vcs, org string) (*PipelineResponse, error) {
 	return pipelineResp, nil
 }
 
+func (c *Client) ListOrganizations() (*[]OrganizationResponse, error) {
+	u := &url.URL{
+		Path: "me/collaborations",
+	}
+	values := u.Query()
+	u.RawQuery = values.Encode()
+
+	req, err := c.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	organizationResp := &[]OrganizationResponse{}
+
+	_, err = c.DoRequest(req, organizationResp)
+	if err != nil {
+		return nil, err
+	}
+
+	return organizationResp, nil
+}
+
 func (c *Client) ListPipelinesWorkflow(pipelineId string) (*WorkflowResponse, error) {
 	u := &url.URL{
 		Path: fmt.Sprintf("pipeline/%s/workflow", pipelineId),

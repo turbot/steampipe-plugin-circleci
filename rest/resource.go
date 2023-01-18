@@ -58,3 +58,11 @@ type WorkflowResponse struct {
 	} `json:"items"`
 	NextPageToken string `json:"next_page_token"`
 }
+
+type OrganizationResponse struct {
+	VcsType   string `json:"vcs_type"`
+	Slug      string `json:"slug"`
+	Name      string `json:"name"`
+	ID        string `json:"id"`
+	AvatarURL string `json:"avatar_url"`
+}
