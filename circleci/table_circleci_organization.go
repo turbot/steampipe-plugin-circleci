@@ -24,6 +24,7 @@ func tableCircleCIOrganization() *plugin.Table {
 			{Name: "name", Description: "The organization name.", Type: proto.ColumnType_STRING},
 			{Name: "vcs_type", Description: "Version control system of the organization.", Type: proto.ColumnType_STRING},
 			{Name: "avatar_url", Description: "Avatar icon of the organization.", Type: proto.ColumnType_STRING},
+			{Name: "contexts", Description: "Contexts provide a mechanism for securing and sharing environment variables across projects.", Type: proto.ColumnType_JSON},
 		},
 	}
 }
@@ -46,6 +47,13 @@ func listCircleCIOrganizations(ctx context.Context, d *plugin.QueryData, _ *plug
 	}
 
 	for _, organization := range *organizations {
+		contextResponses, err := client.ListContexts(organization.Slug)
+		if err != nil {
+			logger.Error("circleci_organization.listCircleCIContexts", "list_organizations_error", err)
+			return nil, err
+		}
+		organization.Contexts = contextResponses.Items
+
 		d.StreamListItem(ctx, organization)
 
 		// Context can be cancelled due to manual cancellation or the limit has been hit

@@ -188,6 +188,31 @@ func (c *Client) ListOrganizations() (*[]OrganizationResponse, error) {
 	return organizationResp, nil
 }
 
+func (c *Client) ListContexts(orgSlug string) (*ContextResponse, error) {
+	u := &url.URL{
+		Path: "context",
+	}
+	values := u.Query()
+	values.Add("owner-slug", orgSlug)
+	u.RawQuery = values.Encode()
+
+	req, err := c.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	contextResp := &ContextResponse{}
+
+	_, err = c.DoRequest(req, contextResp)
+	if err != nil {
+		if !strings.Contains(err.Error(), "you don't have permission") {
+			return nil, err
+		}
+	}
+
+	return contextResp, nil
+}
+
 func (c *Client) ListPipelinesWorkflow(pipelineId string) (*WorkflowResponse, error) {
 	u := &url.URL{
 		Path: fmt.Sprintf("pipeline/%s/workflow", pipelineId),
