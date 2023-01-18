@@ -188,12 +188,15 @@ func (c *Client) ListOrganizations() (*[]OrganizationResponse, error) {
 	return organizationResp, nil
 }
 
-func (c *Client) ListContexts(orgSlug string) (*ContextResponse, error) {
+func (c *Client) ListContexts(orgSlug, pageToken string) (*ContextResponse, error) {
 	u := &url.URL{
 		Path: "context",
 	}
 	values := u.Query()
 	values.Add("owner-slug", orgSlug)
+	if pageToken != "" {
+		values.Add("page-token", pageToken)
+	}
 	u.RawQuery = values.Encode()
 
 	req, err := c.NewRequest("GET", u, nil)

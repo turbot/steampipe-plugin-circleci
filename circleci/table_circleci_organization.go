@@ -3,6 +3,7 @@ package circleci
 import (
 	"context"
 
+	"github.com/turbot/steampipe-plugin-circleci/rest"
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
@@ -47,13 +48,11 @@ func listCircleCIOrganizations(ctx context.Context, d *plugin.QueryData, _ *plug
 	}
 
 	for _, organization := range *organizations {
-		contextResponses, err := client.ListContexts(organization.Slug)
+		organization.Contexts, err = getOrganizationContexts(*client, organization.Slug)
 		if err != nil {
 			logger.Error("circleci_organization.listCircleCIContexts", "list_organizations_error", err)
 			return nil, err
 		}
-		organization.Contexts = contextResponses.Items
-
 		d.StreamListItem(ctx, organization)
 
 		// Context can be cancelled due to manual cancellation or the limit has been hit
@@ -63,4 +62,21 @@ func listCircleCIOrganizations(ctx context.Context, d *plugin.QueryData, _ *plug
 	}
 
 	return nil, err
+}
+
+func getOrganizationContexts(client rest.Client, organizationSlug string) ([]rest.Context, error) {
+	var contexts []rest.Context
+	var pageToken string
+	for {
+		contextResponses, err := client.ListContexts(organizationSlug, pageToken)
+		if err != nil {
+			return nil, err
+		}
+		contexts = append(contexts, contextResponses.Items...)
+		if contextResponses.NextPageToken == "" {
+			break
+		}
+		pageToken = contextResponses.NextPageToken
+	}
+	return contexts, nil
 }
