@@ -216,7 +216,7 @@ func (c *Client) ListContexts(orgSlug, pageToken string) (*ContextResponse, erro
 	return contextResp, nil
 }
 
-func (c *Client) ListEnvironmentVariable(contextId, pageToken string) (*EnvironmentVariableResponse, error) {
+func (c *Client) ListContextEnvironmentVariable(contextId, pageToken string) (*EnvironmentVariableResponse, error) {
 	u := &url.URL{
 		Path: fmt.Sprintf("context/%s/environment-variable", contextId),
 	}

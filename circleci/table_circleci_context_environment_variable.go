@@ -10,12 +10,12 @@ import (
 
 //// TABLE DEFINITION
 
-func tableCircleCIEnvironmentVariable() *plugin.Table {
+func tableCircleCIContextEnvironmentVariable() *plugin.Table {
 	return &plugin.Table{
-		Name:        "circleci_environment_variable",
-		Description: "CircleCI environment variables store customer data that is used by projects.",
+		Name:        "circleci_context_environment_variable",
+		Description: "CircleCI context environment variables store customer data that is used by projects.",
 		List: &plugin.ListConfig{
-			Hydrate:    listCircleCIEnvironmentVariables,
+			Hydrate:    listCircleCIContextEnvironmentVariables,
 			KeyColumns: plugin.SingleColumn("context_id"),
 		},
 
@@ -30,7 +30,7 @@ func tableCircleCIEnvironmentVariable() *plugin.Table {
 
 //// LIST FUNCTION
 
-func listCircleCIEnvironmentVariables(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
+func listCircleCIContextEnvironmentVariables(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
 	logger := plugin.Logger(ctx)
 
 	contextId := d.EqualsQualString("context_id")
@@ -42,15 +42,15 @@ func listCircleCIEnvironmentVariables(ctx context.Context, d *plugin.QueryData, 
 
 	client, err := ConnectV2RestApi(ctx, d)
 	if err != nil {
-		logger.Error("circleci_environment_variable.listCircleCIEnvironmentVariables", "connect_error", err)
+		logger.Error("circleci_context_environment_variable.listCircleCIContextEnvironmentVariables", "connect_error", err)
 		return nil, err
 	}
 
 	var pageToken string
 	for {
-		envVarResponses, err := client.ListEnvironmentVariable(contextId, pageToken)
+		envVarResponses, err := client.ListContextEnvironmentVariable(contextId, pageToken)
 		if err != nil {
-			logger.Error("circleci_environment_variable.listCircleCIEnvironmentVariables", "list_environment_variables_error", err)
+			logger.Error("circleci_context_environment_variable.listCircleCIContextEnvironmentVariables", "list_context_environment_variables_error", err)
 			return nil, err
 		}
 		for _, pipeline := range envVarResponses.Items {
