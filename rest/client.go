@@ -188,12 +188,12 @@ func (c *Client) ListOrganizations() (*[]OrganizationResponse, error) {
 	return organizationResp, nil
 }
 
-func (c *Client) ListContexts(orgSlug, pageToken string) (*ContextResponse, error) {
+func (c *Client) ListContext(organizationSlug, pageToken string) (*ContextResponse, error) {
 	u := &url.URL{
 		Path: "context",
 	}
 	values := u.Query()
-	values.Add("owner-slug", orgSlug)
+	values.Add("owner-slug", organizationSlug)
 	if pageToken != "" {
 		values.Add("page-token", pageToken)
 	}
@@ -214,6 +214,23 @@ func (c *Client) ListContexts(orgSlug, pageToken string) (*ContextResponse, erro
 	}
 
 	return contextResp, nil
+}
+
+func (c *Client) ListAllContext(organizationSlug string) ([]Context, error) {
+	var contexts []Context
+	var pageToken string
+	for {
+		contextResponses, err := c.ListContext(organizationSlug, pageToken)
+		if err != nil {
+			return nil, err
+		}
+		contexts = append(contexts, contextResponses.Items...)
+		if contextResponses.NextPageToken == "" {
+			break
+		}
+		pageToken = contextResponses.NextPageToken
+	}
+	return contexts, nil
 }
 
 func (c *Client) ListContextEnvironmentVariable(contextId, pageToken string) (*EnvironmentVariableResponse, error) {

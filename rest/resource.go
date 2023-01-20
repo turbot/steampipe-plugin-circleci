@@ -74,9 +74,10 @@ type ContextResponse struct {
 }
 
 type Context struct {
-	ID        string    `json:"id"`
-	Name      string    `json:"name"`
-	CreatedAt time.Time `json:"created_at"`
+	ID               string    `json:"id"`
+	OrganizationSlug string    `json:"slug"`
+	Name             string    `json:"name"`
+	CreatedAt        time.Time `json:"created_at"`
 }
 
 type EnvironmentVariableResponse struct {
