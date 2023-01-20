@@ -16,16 +16,22 @@ order by
   name;
 ```
 
-### Contexts of an organizations
+### Context environment variables not updated for more then 90 days across my organizations
 
 ```sql
 select
-  c ->> 'id' as id,
-  c ->> 'name' as name,
-  c ->> 'created_at' as created_at
+  c.organization_slug,
+  v.context_id,
+  c.name as context,
+  v.variable,
+  v.created_at,
+  v.updated_at
 from
-  circleci_organization o,
-  jsonb_array_elements(o.contexts) c
+  circleci_context_environment_variable v
+join
+  circleci_context c
+on
+  c.id = v.context_id
 where
-  o.slug = 'gh/fluent-cattle';
+  updated_at < current_date - interval '90' day;
 ```
