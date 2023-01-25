@@ -18,7 +18,8 @@ where
   context_id = '60d77d33-a62c-4167-90be-3e02ee38a75b';
 ```
 
-### Environment variables not updated for more then 90 days
+### Environment variables not updated for more than 90 days
+
 ```sql
 select
   context_id,
