@@ -16,7 +16,7 @@ from
   circleci_context;
 ```
 
-### Context environment variables of a organization
+### Context environment variables of an organization
 
 ```sql
 select
