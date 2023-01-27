@@ -25,10 +25,10 @@ select
   context_id,
   variable,
   created_at,
-  updated_at
+  updated_at 
 from
   circleci_context_environment_variable
 where
-  context_id = '60d77d33-a62c-4167-90be-3e02ee38a75b' and
-  updated_at < current_date - interval '90' day;
+  context_id = '60d77d33-a62c-4167-90be-3e02ee38a75b'
+  and updated_at < current_date - interval '90' day;
 ```

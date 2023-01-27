@@ -27,10 +27,9 @@ select
   v.updated_at
 from
   circleci_context c
-join
-  circleci_context_environment_variable v
-on
-  v.context_id = c.id
+  join
+    circleci_context_environment_variable v
+    on v.context_id = c.id
 where
   organization_slug = 'gh/fluent-cattle';
 ```

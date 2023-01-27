@@ -28,10 +28,9 @@ select
   v.updated_at
 from
   circleci_context_environment_variable v
-join
-  circleci_context c
-on
-  c.id = v.context_id
+  join
+    circleci_context c
+    on c.id = v.context_id
 where
   updated_at < current_date - interval '90' day;
 ```
