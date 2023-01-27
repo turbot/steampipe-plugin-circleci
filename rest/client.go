@@ -166,6 +166,98 @@ func (c *Client) ListPipelines(vcs, org string) (*PipelineResponse, error) {
 	return pipelineResp, nil
 }
 
+func (c *Client) ListOrganizations() (*[]OrganizationResponse, error) {
+	u := &url.URL{
+		Path: "me/collaborations",
+	}
+	values := u.Query()
+	u.RawQuery = values.Encode()
+
+	req, err := c.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	organizationResp := &[]OrganizationResponse{}
+
+	_, err = c.DoRequest(req, organizationResp)
+	if err != nil {
+		return nil, err
+	}
+
+	return organizationResp, nil
+}
+
+func (c *Client) ListContext(organizationSlug, pageToken string) (*ContextResponse, error) {
+	u := &url.URL{
+		Path: "context",
+	}
+	values := u.Query()
+	values.Add("owner-slug", organizationSlug)
+	if pageToken != "" {
+		values.Add("page-token", pageToken)
+	}
+	u.RawQuery = values.Encode()
+
+	req, err := c.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	contextResp := &ContextResponse{}
+
+	_, err = c.DoRequest(req, contextResp)
+	if err != nil {
+		if !strings.Contains(err.Error(), "you don't have permission") {
+			return nil, err
+		}
+	}
+
+	return contextResp, nil
+}
+
+func (c *Client) ListAllContext(organizationSlug string) ([]Context, error) {
+	var contexts []Context
+	var pageToken string
+	for {
+		contextResponses, err := c.ListContext(organizationSlug, pageToken)
+		if err != nil {
+			return nil, err
+		}
+		contexts = append(contexts, contextResponses.Items...)
+		if contextResponses.NextPageToken == "" {
+			break
+		}
+		pageToken = contextResponses.NextPageToken
+	}
+	return contexts, nil
+}
+
+func (c *Client) ListContextEnvironmentVariable(contextId, pageToken string) (*EnvironmentVariableResponse, error) {
+	u := &url.URL{
+		Path: fmt.Sprintf("context/%s/environment-variable", contextId),
+	}
+	values := u.Query()
+	if pageToken != "" {
+		values.Add("page-token", pageToken)
+	}
+	u.RawQuery = values.Encode()
+
+	req, err := c.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	envVarResp := &EnvironmentVariableResponse{}
+
+	_, err = c.DoRequest(req, envVarResp)
+	if err != nil {
+		return nil, err
+	}
+
+	return envVarResp, nil
+}
+
 func (c *Client) ListPipelinesWorkflow(pipelineId string) (*WorkflowResponse, error) {
 	u := &url.URL{
 		Path: fmt.Sprintf("pipeline/%s/workflow", pipelineId),

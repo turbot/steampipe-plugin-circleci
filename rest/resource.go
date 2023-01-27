@@ -58,3 +58,36 @@ type WorkflowResponse struct {
 	} `json:"items"`
 	NextPageToken string `json:"next_page_token"`
 }
+
+type OrganizationResponse struct {
+	VcsType   string    `json:"vcs_type"`
+	Slug      string    `json:"slug"`
+	Name      string    `json:"name"`
+	ID        string    `json:"id"`
+	AvatarURL string    `json:"avatar_url"`
+	Contexts  []Context `json:"context"`
+}
+
+type ContextResponse struct {
+	Items         []Context `json:"items"`
+	NextPageToken string    `json:"next_page_token"`
+}
+
+type Context struct {
+	ID               string    `json:"id"`
+	OrganizationSlug string    `json:"slug"`
+	Name             string    `json:"name"`
+	CreatedAt        time.Time `json:"created_at"`
+}
+
+type EnvironmentVariableResponse struct {
+	Items         []EnvironmentVariable `json:"items"`
+	NextPageToken string                `json:"next_page_token"`
+}
+
+type EnvironmentVariable struct {
+	ContextID string    `json:"context_id"`
+	Variable  string    `json:"variable"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
