@@ -63,3 +63,9 @@ func listCircleCIContexts(ctx context.Context, d *plugin.QueryData, h *plugin.Hy
 
 	return nil, err
 }
+
+//// GET FUNCTION
+
+// Currently GET endpoint does not return the organization slug the context belongs to, thus implementing a get function
+// would result in empty organization_slug column response.
+// API ref - https://circleci.com/docs/api/v2/index.html#operation/getContext
