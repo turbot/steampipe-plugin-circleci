@@ -2,7 +2,7 @@
 
 _Dependencies_
 
-- Recompiled plugin with steampipe-plugin-sdk v5.3.0 which adds go-getter support to dynamic tables. ([#6](https://github.com/turbot/steampipe-plugin-circleci/pull/6))
+- Recompiled plugin with [steampipe-plugin-sdk v5.3.0](https://github.com/turbot/steampipe-plugin-sdk/blob/main/CHANGELOG.md#v530-2023-03-16) which adds go-getter support to dynamic tables. ([#6](https://github.com/turbot/steampipe-plugin-circleci/pull/6))
 
 ## v0.1.0 [2023-01-27]
 
