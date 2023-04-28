@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/hashicorp/go-hclog"
 	"io"
 	"net/http"
 	"net/url"
@@ -276,6 +277,50 @@ func (c *Client) ListPipelinesWorkflow(pipelineId string) (*WorkflowResponse, er
 	}
 
 	return workflowResp, nil
+}
+
+func (c *Client) ListInsightsWorkflows(projectSlug, workflowName, branch, pageToken string, logger hclog.Logger) (*InsightsWorkflowResponse, error) {
+	u := &url.URL{
+		Path: fmt.Sprintf("insights/%s/workflows/%s", projectSlug, workflowName),
+	}
+	values := u.Query()
+	if branch != "" {
+		values.Add("branch", branch)
+	}
+	if pageToken != "" {
+		values.Add("page-token", pageToken)
+	}
+	u.RawQuery = values.Encode()
+	req, err := c.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, err
+	}
+	logger.Debug("Request call", "req", req)
+	resp := &InsightsWorkflowResponse{}
+	_, err = c.DoRequest(req, resp)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return resp, nil
+}
+
+func (c *Client) ListAllInsightsWorkflows(projectSlug, workflowName, branch string, logger hclog.Logger) ([]InsightsWorkflow, error) {
+	var workflows []InsightsWorkflow
+	var pageToken string
+	for {
+		workflowResponses, err := c.ListInsightsWorkflows(projectSlug, workflowName, branch, pageToken, logger)
+		if err != nil {
+			return nil, err
+		}
+		workflows = append(workflows, workflowResponses.Items...)
+		if workflowResponses.NextPageToken == "" {
+			break
+		}
+		pageToken = workflowResponses.NextPageToken
+	}
+	return workflows, nil
 }
 
 // Slug returns a project slug, including the VCS, organization, and project names

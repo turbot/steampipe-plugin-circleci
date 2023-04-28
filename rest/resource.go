@@ -59,6 +59,23 @@ type WorkflowResponse struct {
 	NextPageToken string `json:"next_page_token"`
 }
 
+type InsightsWorkflowResponse struct {
+	Items         []InsightsWorkflow `json:"items"`
+	NextPageToken string             `json:"next_page_token"`
+}
+
+type InsightsWorkflow struct {
+	ID           string    `json:"id"`
+	WorkflowName string    `json:"workflow_name"`
+	ProjectSlug  string    `json:"project_slug"`
+	Branch       string    `json:"branch"`
+	Duration     int       `json:"duration"`
+	CreatedAt    time.Time `json:"created_at"`
+	StoppedAt    time.Time `json:"stopped_at"`
+	CreditsUsed  int       `json:"credits_used"`
+	Status       string    `json:"status"`
+}
+
 type OrganizationResponse struct {
 	VcsType   string    `json:"vcs_type"`
 	Slug      string    `json:"slug"`

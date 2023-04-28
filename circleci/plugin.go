@@ -26,6 +26,7 @@ func Plugin(ctx context.Context) *plugin.Plugin {
 			"circleci_pipeline":                     tableCircleCIPipeline(),
 			"circleci_project":                      tableCircleCIProject(),
 			"circleci_workflow":                     tableCircleCIWorkflow(),
+			"circleci_insights_workflow":            tableCircleCIInsightsWorkflow(),
 		},
 	}
 
