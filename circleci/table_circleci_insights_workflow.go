@@ -14,7 +14,7 @@ import (
 func tableCircleCIInsightsWorkflow() *plugin.Table {
 	return &plugin.Table{
 		Name:        "circleci_insights_workflow",
-		Description: "Get insights on project workflows. Runs going back at most 90 days are returned.",
+		Description: "Get insights on project workflows.",
 		List: &plugin.ListConfig{
 			Hydrate: listCircleCIInsightsWorkflow,
 			KeyColumns: []*plugin.KeyColumn{
@@ -49,7 +49,7 @@ func listCircleCIInsightsWorkflow(ctx context.Context, d *plugin.QueryData, _ *p
 	if d.EqualsQuals["branch"] != nil {
 		branch = d.EqualsQuals["branch"].GetStringValue()
 	}
-	logger.Info("circleci_pipeline.listCircleCIInsightsWorkflow", "branch", branch)
+	logger.Info("circleci_insights_workflow.listCircleCIInsightsWorkflow", "branch", branch)
 
 	if projectSlug == "" || workflowName == "" {
 		return nil, nil
@@ -58,18 +58,18 @@ func listCircleCIInsightsWorkflow(ctx context.Context, d *plugin.QueryData, _ *p
 	projectSlugSplit := strings.Split(projectSlug, "/")
 	if len(projectSlugSplit) < 3 {
 		err := errors.New("Malformed input for project_slug. Expected: {VCS}/{Org username}/{Repository name}")
-		logger.Error("circleci_pipeline.listCircleCIInsightsWorkflow", "malformed_input", err)
+		logger.Error("circleci_insights_workflow.listCircleCIInsightsWorkflow", "malformed_input", err)
 		return nil, err
 	}
 
 	client, err := ConnectV2RestApi(ctx, d)
 	if err != nil {
-		logger.Error("circleci_pipeline.listCircleCIInsightsWorkflow", "connect_error", err)
+		logger.Error("circleci_insights_workflow.listCircleCIInsightsWorkflow", "connect_error", err)
 		return nil, err
 	}
 	workflows, err := client.ListAllInsightsWorkflows(projectSlug, workflowName, branch, logger)
 	if err != nil {
-		logger.Error("circleci_pipeline.listCircleCIInsightsWorkflow", "list_insight_error", err)
+		logger.Error("circleci_insights_workflow.listCircleCIInsightsWorkflow", "list_insight_error", err)
 		return nil, err
 	}
 

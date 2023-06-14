@@ -22,11 +22,11 @@ func Plugin(ctx context.Context) *plugin.Plugin {
 			"circleci_build":                        tableCircleCIBuild(),
 			"circleci_context":                      tableCircleCIContext(),
 			"circleci_context_environment_variable": tableCircleCIContextEnvironmentVariable(),
+			"circleci_insights_workflow":            tableCircleCIInsightsWorkflow(),
 			"circleci_organization":                 tableCircleCIOrganization(),
 			"circleci_pipeline":                     tableCircleCIPipeline(),
 			"circleci_project":                      tableCircleCIProject(),
 			"circleci_workflow":                     tableCircleCIWorkflow(),
-			"circleci_insights_workflow":            tableCircleCIInsightsWorkflow(),
 		},
 	}
 
