@@ -101,10 +101,10 @@ func getStartDateAndEndDate(d *plugin.QueryData) (string, string) {
 			for _, qual := range createdAtQuals {
 				if _, ok := qual.GetOperator().(*proto.Qual_StringValue); ok {
 					operator := qual.GetOperator().(*proto.Qual_StringValue).StringValue
-					if operator == ">" {
+					if operator == ">" || operator == ">=" {
 						startDate = qual.Value.GetTimestampValue().AsTime().Format(time.RFC3339)
 					}
-					if operator == "<" {
+					if operator == "<" || operator == "<=" {
 						endDate = qual.Value.GetTimestampValue().AsTime().Format(time.RFC3339)
 					}
 				}
