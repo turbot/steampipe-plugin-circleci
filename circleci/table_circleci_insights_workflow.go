@@ -7,6 +7,7 @@ import (
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
 	"strings"
+	"time"
 )
 
 //// TABLE DEFINITION
@@ -21,6 +22,7 @@ func tableCircleCIInsightsWorkflow() *plugin.Table {
 				{Name: "project_slug", Require: plugin.Required},
 				{Name: "workflow_name", Require: plugin.Required},
 				{Name: "branch", Require: plugin.Optional},
+				{Name: "created_at", Require: plugin.Optional},
 			},
 		},
 
@@ -47,8 +49,9 @@ func listCircleCIInsightsWorkflow(ctx context.Context, d *plugin.QueryData, _ *p
 	workflowName := d.EqualsQualString("workflow_name")
 	branch := ""
 	if d.EqualsQuals["branch"] != nil {
-		branch = d.EqualsQuals["branch"].GetStringValue()
+		branch = d.EqualsQualString("branch")
 	}
+	startDate, endDate := getStartDateAndEndDate(d)
 	logger.Info("circleci_insights_workflow.listCircleCIInsightsWorkflow", "branch", branch)
 
 	if projectSlug == "" || workflowName == "" {
@@ -67,7 +70,7 @@ func listCircleCIInsightsWorkflow(ctx context.Context, d *plugin.QueryData, _ *p
 		logger.Error("circleci_insights_workflow.listCircleCIInsightsWorkflow", "connect_error", err)
 		return nil, err
 	}
-	workflows, err := client.ListAllInsightsWorkflows(projectSlug, workflowName, branch, logger)
+	workflows, err := client.ListAllInsightsWorkflows(projectSlug, workflowName, branch, startDate, endDate, logger)
 	if err != nil {
 		logger.Error("circleci_insights_workflow.listCircleCIInsightsWorkflow", "list_insight_error", err)
 		return nil, err
@@ -87,4 +90,30 @@ func listCircleCIInsightsWorkflow(ctx context.Context, d *plugin.QueryData, _ *p
 	}
 
 	return nil, err
+}
+
+func getStartDateAndEndDate(d *plugin.QueryData) (string, string) {
+	startDate := ""
+	endDate := ""
+	if d.QueryContext.UnsafeQuals["created_at"] != nil {
+		createdAtQuals := d.QueryContext.UnsafeQuals["created_at"].Quals
+		if createdAtQuals != nil {
+			for _, qual := range createdAtQuals {
+				if _, ok := qual.GetOperator().(*proto.Qual_StringValue); ok {
+					operator := qual.GetOperator().(*proto.Qual_StringValue).StringValue
+					if operator == ">" {
+						startDate = qual.Value.GetTimestampValue().AsTime().Format(time.RFC3339)
+					}
+					if operator == "<" {
+						endDate = qual.Value.GetTimestampValue().AsTime().Format(time.RFC3339)
+					}
+				}
+			}
+		}
+	}
+	if startDate == "" {
+		// end-date can be used only with start-date
+		endDate = ""
+	}
+	return startDate, endDate
 }
