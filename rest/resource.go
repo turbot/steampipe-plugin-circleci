@@ -59,12 +59,12 @@ type WorkflowResponse struct {
 	NextPageToken string `json:"next_page_token"`
 }
 
-type InsightsWorkflowResponse struct {
-	Items         []InsightsWorkflow `json:"items"`
-	NextPageToken string             `json:"next_page_token"`
+type InsightsWorkflowRunResponse struct {
+	Items         []InsightsWorkflowRun `json:"items"`
+	NextPageToken string                `json:"next_page_token"`
 }
 
-type InsightsWorkflow struct {
+type InsightsWorkflowRun struct {
 	ID           string    `json:"id"`
 	WorkflowName string    `json:"workflow_name"`
 	ProjectSlug  string    `json:"project_slug"`

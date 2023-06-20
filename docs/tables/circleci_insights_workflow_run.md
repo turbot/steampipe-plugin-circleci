@@ -1,4 +1,4 @@
-# Table: circleci_insights_workflow
+# Table: circleci_insights_workflow_run
 
 Get Insights for your workflows. It can access data spanning up to 90 days.
 
@@ -13,7 +13,7 @@ select
   avg(duration) as average_duration,
   count(id) as deployment_count
 from
-  circleci_insights_workflow
+  circleci_insights_workflow_run
 where
   workflow_name = 'default'
   and project_slug = 'gh/companyname/projectname'
@@ -30,7 +30,7 @@ group by
 select
   *
 from
-  circleci_insights_workflow
+  circleci_insights_workflow_run
 where
   workflow_name = 'default'
   and project_slug = 'gh/companyname/projectname'
@@ -43,7 +43,7 @@ where
 select
   *
 from
-  circleci_insights_workflow 
+  circleci_insights_workflow_run 
 where
   workflow_name = 'default'
   and project_slug = 'gh/companyname/projectname'

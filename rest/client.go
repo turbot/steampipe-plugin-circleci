@@ -279,7 +279,7 @@ func (c *Client) ListPipelinesWorkflow(pipelineId string) (*WorkflowResponse, er
 	return workflowResp, nil
 }
 
-func (c *Client) ListInsightsWorkflows(projectSlug, workflowName, branch, startDate, endDate, pageToken string, logger hclog.Logger) (*InsightsWorkflowResponse, error) {
+func (c *Client) ListInsightsWorkflowRuns(projectSlug, workflowName, branch, startDate, endDate, pageToken string, logger hclog.Logger) (*InsightsWorkflowRunResponse, error) {
 	u := &url.URL{
 		Path: fmt.Sprintf("insights/%s/workflows/%s", projectSlug, workflowName),
 	}
@@ -305,7 +305,7 @@ func (c *Client) ListInsightsWorkflows(projectSlug, workflowName, branch, startD
 		return nil, err
 	}
 	logger.Debug("Request call", "req", req)
-	resp := &InsightsWorkflowResponse{}
+	resp := &InsightsWorkflowRunResponse{}
 	_, err = c.DoRequest(req, resp)
 
 	if err != nil {
@@ -315,11 +315,11 @@ func (c *Client) ListInsightsWorkflows(projectSlug, workflowName, branch, startD
 	return resp, nil
 }
 
-func (c *Client) ListAllInsightsWorkflows(projectSlug, workflowName, branch, startDate, endDate string, logger hclog.Logger) ([]InsightsWorkflow, error) {
-	var workflows []InsightsWorkflow
+func (c *Client) ListAllInsightsWorkflowRuns(projectSlug, workflowName, branch, startDate, endDate string, logger hclog.Logger) ([]InsightsWorkflowRun, error) {
+	var workflows []InsightsWorkflowRun
 	var pageToken string
 	for {
-		workflowResponses, err := c.ListInsightsWorkflows(projectSlug, workflowName, branch, startDate, endDate, pageToken, logger)
+		workflowResponses, err := c.ListInsightsWorkflowRuns(projectSlug, workflowName, branch, startDate, endDate, pageToken, logger)
 		if err != nil {
 			return nil, err
 		}

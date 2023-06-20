@@ -12,12 +12,12 @@ import (
 
 //// TABLE DEFINITION
 
-func tableCircleCIInsightsWorkflow() *plugin.Table {
+func tableCircleCIInsightsWorkflowRun() *plugin.Table {
 	return &plugin.Table{
-		Name:        "circleci_insights_workflow",
-		Description: "Get insights on project workflows.",
+		Name:        "circleci_insights_workflow_run",
+		Description: "Get insights on project workflows runs.",
 		List: &plugin.ListConfig{
-			Hydrate: listCircleCIInsightsWorkflow,
+			Hydrate: listCircleCIInsightsWorkflowRuns,
 			KeyColumns: []*plugin.KeyColumn{
 				{Name: "project_slug", Require: plugin.Required},
 				{Name: "workflow_name", Require: plugin.Required},
@@ -42,7 +42,7 @@ func tableCircleCIInsightsWorkflow() *plugin.Table {
 
 //// LIST FUNCTION
 
-func listCircleCIInsightsWorkflow(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
+func listCircleCIInsightsWorkflowRuns(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
 	logger := plugin.Logger(ctx)
 
 	projectSlug := d.EqualsQualString("project_slug")
@@ -52,7 +52,7 @@ func listCircleCIInsightsWorkflow(ctx context.Context, d *plugin.QueryData, _ *p
 		branch = d.EqualsQualString("branch")
 	}
 	startDate, endDate := getStartDateAndEndDate(d)
-	logger.Info("circleci_insights_workflow.listCircleCIInsightsWorkflow", "branch", branch)
+	logger.Info("circleci_insights_workflow_run.listCircleCIInsightsWorkflowRuns", "branch", branch)
 
 	if projectSlug == "" || workflowName == "" {
 		return nil, nil
@@ -61,18 +61,18 @@ func listCircleCIInsightsWorkflow(ctx context.Context, d *plugin.QueryData, _ *p
 	projectSlugSplit := strings.Split(projectSlug, "/")
 	if len(projectSlugSplit) < 3 {
 		err := errors.New("Malformed input for project_slug. Expected: {VCS}/{Org username}/{Repository name}")
-		logger.Error("circleci_insights_workflow.listCircleCIInsightsWorkflow", "malformed_input", err)
+		logger.Error("circleci_insights_workflow_run.listCircleCIInsightsWorkflowRuns", "malformed_input", err)
 		return nil, err
 	}
 
 	client, err := ConnectV2RestApi(ctx, d)
 	if err != nil {
-		logger.Error("circleci_insights_workflow.listCircleCIInsightsWorkflow", "connect_error", err)
+		logger.Error("circleci_insights_workflow_run.listCircleCIInsightsWorkflowRuns", "connect_error", err)
 		return nil, err
 	}
-	workflows, err := client.ListAllInsightsWorkflows(projectSlug, workflowName, branch, startDate, endDate, logger)
+	workflows, err := client.ListAllInsightsWorkflowRuns(projectSlug, workflowName, branch, startDate, endDate, logger)
 	if err != nil {
-		logger.Error("circleci_insights_workflow.listCircleCIInsightsWorkflow", "list_insight_error", err)
+		logger.Error("circleci_insights_workflow_run.listCircleCIInsightsWorkflowRuns", "list_insight_error", err)
 		return nil, err
 	}
 
