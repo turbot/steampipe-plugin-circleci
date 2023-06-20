@@ -3,6 +3,8 @@ package circleci
 import (
 	"context"
 	"errors"
+	"github.com/hashicorp/go-hclog"
+	"github.com/turbot/steampipe-plugin-circleci/rest"
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
@@ -17,10 +19,11 @@ func tableCircleCIInsightsWorkflowRun() *plugin.Table {
 		Name:        "circleci_insights_workflow_run",
 		Description: "Get insights on project workflows runs.",
 		List: &plugin.ListConfig{
-			Hydrate: listCircleCIInsightsWorkflowRuns,
+			Hydrate:       listCircleCIInsightsWorkflowRuns,
+			ParentHydrate: parentCircleCIWorkflows,
 			KeyColumns: []*plugin.KeyColumn{
-				{Name: "project_slug", Require: plugin.Required},
-				{Name: "workflow_name", Require: plugin.Required},
+				{Name: "project_slug", Require: plugin.Optional},
+				{Name: "workflow_name", Require: plugin.Optional},
 				{Name: "branch", Require: plugin.Optional},
 				{Name: "created_at", Require: plugin.Optional},
 			},
@@ -42,11 +45,32 @@ func tableCircleCIInsightsWorkflowRun() *plugin.Table {
 
 //// LIST FUNCTION
 
-func listCircleCIInsightsWorkflowRuns(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
+func listCircleCIInsightsWorkflowRuns(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
 	logger := plugin.Logger(ctx)
 
 	projectSlug := d.EqualsQualString("project_slug")
 	workflowName := d.EqualsQualString("workflow_name")
+	if projectSlug != "" && workflowName != "" {
+		return listSingleWorkflowRuns(ctx, d, logger, projectSlug, workflowName)
+	}
+
+	workflows := h.Item.(*rest.WorkflowResponse)
+	for _, workflow := range workflows.Items {
+		if projectSlug == "" {
+			projectSlug = workflow.ProjectSlug
+		}
+		if workflowName == "" {
+			workflowName = workflow.Name
+		}
+		_, err := listSingleWorkflowRuns(ctx, d, logger, projectSlug, workflowName)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return nil, nil
+}
+
+func listSingleWorkflowRuns(ctx context.Context, d *plugin.QueryData, logger hclog.Logger, projectSlug string, workflowName string) (interface{}, error) {
 	branch := ""
 	if d.EqualsQuals["branch"] != nil {
 		branch = d.EqualsQualString("branch")
@@ -88,8 +112,7 @@ func listCircleCIInsightsWorkflowRuns(ctx context.Context, d *plugin.QueryData, 
 			return nil, nil
 		}
 	}
-
-	return nil, err
+	return nil, nil
 }
 
 func getStartDateAndEndDate(d *plugin.QueryData) (string, string) {
@@ -116,4 +139,74 @@ func getStartDateAndEndDate(d *plugin.QueryData) (string, string) {
 		endDate = ""
 	}
 	return startDate, endDate
+}
+
+func parentCircleCIWorkflows(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
+	logger := plugin.Logger(ctx)
+
+	projectSlugQual := d.EqualsQualString("project_slug")
+	workflowNameQual := d.EqualsQualString("workflow_name")
+	if projectSlugQual != "" && workflowNameQual != "" {
+		response := &rest.WorkflowResponse{
+			Items: []rest.Workflow{{
+				ProjectSlug: projectSlugQual,
+				Name:        workflowNameQual,
+			}},
+		}
+		d.StreamListItem(ctx, response)
+		return nil, nil
+	}
+	clientV1, err := ConnectV1Sdk(ctx, d)
+	if err != nil {
+		logger.Error("circleci_insights_workflow_run.parentCircleCIWorkflows", "connect_v1_sdk_error", err)
+		return nil, err
+	}
+
+	clientV2, err := ConnectV2RestApi(ctx, d)
+	if err != nil {
+		logger.Error("circleci_insights_workflow_run.parentCircleCIWorkflows", "connect_v2_sdk_error", err)
+		return nil, err
+	}
+
+	projects, err := clientV1.ListProjects()
+	if err != nil {
+		logger.Error("circleci_insights_workflow_run.parentCircleCIWorkflows", "list_projects_error", err)
+		return nil, err
+	}
+
+	for _, project := range projects {
+		_, projectSlug := Slugify(project.VCSURL, project.Username, project.Reponame)
+		if projectSlug != projectSlugQual {
+			continue
+		}
+		projectSlugSplit := strings.Split(projectSlug, "/")
+		if len(projectSlugSplit) < 3 {
+			err := errors.New("Malformed input for project_slug. Expected: {VCS}/{Org username}/{Repository name}")
+			logger.Error("circleci_insights_workflow_run.parentCircleCIWorkflows", "malformed_input", err)
+			return nil, err
+		}
+		vcs := projectSlugSplit[0]
+		organization := projectSlugSplit[1]
+
+		pipelines, err := clientV2.ListPipelines(vcs, organization)
+		if err != nil {
+			logger.Error("circleci_insights_workflow_run.parentCircleCIWorkflows", "list_pipelines_error", err)
+			return nil, err
+		}
+
+		for _, pipeline := range pipelines.Items {
+			workflows, err := clientV2.ListPipelinesWorkflow(pipeline.ID)
+			if err != nil {
+				logger.Error("circleci_insights_workflow_run.parentCircleCIWorkflows", "list_workflows_error", err)
+				return nil, err
+			}
+			d.StreamListItem(ctx, workflows)
+		}
+
+		// Context can be cancelled due to manual cancellation or the limit has been hit
+		if d.RowsRemaining(ctx) == 0 {
+			return nil, nil
+		}
+	}
+	return nil, nil
 }
