@@ -120,16 +120,14 @@ func getStartDateAndEndDate(d *plugin.QueryData) (string, string) {
 	endDate := ""
 	if d.QueryContext.UnsafeQuals["created_at"] != nil {
 		createdAtQuals := d.QueryContext.UnsafeQuals["created_at"].Quals
-		if createdAtQuals != nil {
-			for _, qual := range createdAtQuals {
-				if _, ok := qual.GetOperator().(*proto.Qual_StringValue); ok {
-					operator := qual.GetOperator().(*proto.Qual_StringValue).StringValue
-					if operator == ">" || operator == ">=" {
-						startDate = qual.Value.GetTimestampValue().AsTime().Format(time.RFC3339)
-					}
-					if operator == "<" || operator == "<=" {
-						endDate = qual.Value.GetTimestampValue().AsTime().Format(time.RFC3339)
-					}
+		for _, qual := range createdAtQuals {
+			if _, ok := qual.GetOperator().(*proto.Qual_StringValue); ok {
+				operator := qual.GetOperator().(*proto.Qual_StringValue).StringValue
+				if operator == ">" || operator == ">=" {
+					startDate = qual.Value.GetTimestampValue().AsTime().Format(time.RFC3339)
+				}
+				if operator == "<" || operator == "<=" {
+					endDate = qual.Value.GetTimestampValue().AsTime().Format(time.RFC3339)
 				}
 			}
 		}
