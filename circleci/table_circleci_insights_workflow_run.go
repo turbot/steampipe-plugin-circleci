@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"math/rand"
 	"strings"
 	"time"
 
@@ -96,11 +95,6 @@ func listSingleWorkflowRuns(ctx context.Context, d *plugin.QueryData, logger hcl
 		logger.Error("circleci_insights_workflow_run.listSingleWorkflowRuns", "connect_error", err)
 		return nil, err
 	}
-
-	// Generate a random sleep duration between 0 and 5 milliseconds to avoid hitting the rate limit
-	rand.Seed(time.Now().UnixNano())
-	sleepDuration := time.Duration(rand.Intn(5)) * time.Millisecond
-	time.Sleep(sleepDuration)
 
 	workflows, err := client.ListAllInsightsWorkflowRuns(projectSlug, workflowName, branch, startDate, endDate, logger)
 	if err != nil {
@@ -197,11 +191,6 @@ func parentCircleCIWorkflows(ctx context.Context, d *plugin.QueryData, _ *plugin
 			if projectSlugQual != "" && pipeline.ProjectSlug != projectSlugQual {
 				continue
 			}
-
-			// Generate a random sleep duration between 0 and 3 milliseconds to avoid hitting the rate limit
-			rand.Seed(time.Now().UnixNano())
-			sleepDuration := time.Duration(rand.Intn(3)) * time.Millisecond
-			time.Sleep(sleepDuration)
 
 			// list all the workflows for the pipeline
 			workflows, err := clientV2.ListPipelinesWorkflow(pipeline.ID)

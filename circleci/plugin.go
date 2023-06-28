@@ -12,8 +12,9 @@ const pluginName = "steampipe-plugin-circleci"
 // Plugin creates this (circleci) plugin
 func Plugin(ctx context.Context) *plugin.Plugin {
 	p := &plugin.Plugin{
-		Name:             pluginName,
-		DefaultTransform: transform.FromCamel(),
+		Name:               pluginName,
+		DefaultTransform:   transform.FromCamel(),
+		DefaultRetryConfig: &plugin.RetryConfig{ShouldRetryErrorFunc: shouldRetryError([]string{"Rate Limit Exceeded"})},
 		ConnectionConfigSchema: &plugin.ConnectionConfigSchema{
 			NewInstance: ConfigInstance,
 			Schema:      ConfigSchema,
