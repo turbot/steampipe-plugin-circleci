@@ -3,13 +3,16 @@ package circleci
 import (
 	"context"
 	"errors"
+	"fmt"
+	"math/rand"
+	"strings"
+	"time"
+
 	"github.com/hashicorp/go-hclog"
 	"github.com/turbot/steampipe-plugin-circleci/rest"
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
-	"strings"
-	"time"
 )
 
 //// TABLE DEFINITION
@@ -54,18 +57,17 @@ func listCircleCIInsightsWorkflowRuns(ctx context.Context, d *plugin.QueryData, 
 		return listSingleWorkflowRuns(ctx, d, logger, projectSlug, workflowName)
 	}
 
-	workflows := h.Item.(*rest.WorkflowResponse)
-	for _, workflow := range workflows.Items {
-		if projectSlug == "" {
-			projectSlug = workflow.ProjectSlug
-		}
-		if workflowName == "" {
-			workflowName = workflow.Name
-		}
-		_, err := listSingleWorkflowRuns(ctx, d, logger, projectSlug, workflowName)
-		if err != nil {
-			return nil, err
-		}
+	workflow := h.Item.(map[string]string)
+	logger.Debug("listCircleCIInsightsWorkflowRuns", "project workflow", workflow["project_slug"]+" "+workflow["workflow_name"])
+	if projectSlug == "" {
+		projectSlug = workflow["project_slug"]
+	}
+	if workflowName == "" {
+		workflowName = workflow["workflow_name"]
+	}
+	_, err := listSingleWorkflowRuns(ctx, d, logger, projectSlug, workflowName)
+	if err != nil {
+		return nil, err
 	}
 	return nil, nil
 }
@@ -76,7 +78,7 @@ func listSingleWorkflowRuns(ctx context.Context, d *plugin.QueryData, logger hcl
 		branch = d.EqualsQualString("branch")
 	}
 	startDate, endDate := getStartDateAndEndDate(d)
-	logger.Info("circleci_insights_workflow_run.listCircleCIInsightsWorkflowRuns", "branch", branch)
+	logger.Info("circleci_insights_workflow_run.listSingleWorkflowRuns", "branch", branch)
 
 	if projectSlug == "" || workflowName == "" {
 		return nil, nil
@@ -85,18 +87,24 @@ func listSingleWorkflowRuns(ctx context.Context, d *plugin.QueryData, logger hcl
 	projectSlugSplit := strings.Split(projectSlug, "/")
 	if len(projectSlugSplit) < 3 {
 		err := errors.New("Malformed input for project_slug. Expected: {VCS}/{Org username}/{Repository name}")
-		logger.Error("circleci_insights_workflow_run.listCircleCIInsightsWorkflowRuns", "malformed_input", err)
+		logger.Error("circleci_insights_workflow_run.listSingleWorkflowRuns", "malformed_input", err)
 		return nil, err
 	}
 
 	client, err := ConnectV2RestApi(ctx, d)
 	if err != nil {
-		logger.Error("circleci_insights_workflow_run.listCircleCIInsightsWorkflowRuns", "connect_error", err)
+		logger.Error("circleci_insights_workflow_run.listSingleWorkflowRuns", "connect_error", err)
 		return nil, err
 	}
+
+	// Generate a random sleep duration between 0 and 5 milliseconds to avoid hitting the rate limit
+	rand.Seed(time.Now().UnixNano())
+	sleepDuration := time.Duration(rand.Intn(5)) * time.Millisecond
+	time.Sleep(sleepDuration)
+
 	workflows, err := client.ListAllInsightsWorkflowRuns(projectSlug, workflowName, branch, startDate, endDate, logger)
 	if err != nil {
-		logger.Error("circleci_insights_workflow_run.listCircleCIInsightsWorkflowRuns", "list_insight_error", err)
+		logger.Error("circleci_insights_workflow_run.listSingleWorkflowRuns", "list_insight_error", err)
 		return nil, err
 	}
 
@@ -145,19 +153,12 @@ func parentCircleCIWorkflows(ctx context.Context, d *plugin.QueryData, _ *plugin
 	projectSlugQual := d.EqualsQualString("project_slug")
 	workflowNameQual := d.EqualsQualString("workflow_name")
 	if projectSlugQual != "" && workflowNameQual != "" {
-		response := &rest.WorkflowResponse{
-			Items: []rest.Workflow{{
-				ProjectSlug: projectSlugQual,
-				Name:        workflowNameQual,
-			}},
+		response := map[string]string{
+			"project_slug":  projectSlugQual,
+			"workflow_name": workflowNameQual,
 		}
 		d.StreamListItem(ctx, response)
 		return nil, nil
-	}
-	clientV1, err := ConnectV1Sdk(ctx, d)
-	if err != nil {
-		logger.Error("circleci_insights_workflow_run.parentCircleCIWorkflows", "connect_v1_sdk_error", err)
-		return nil, err
 	}
 
 	clientV2, err := ConnectV2RestApi(ctx, d)
@@ -166,45 +167,78 @@ func parentCircleCIWorkflows(ctx context.Context, d *plugin.QueryData, _ *plugin
 		return nil, err
 	}
 
-	projects, err := clientV1.ListProjects()
+	organizations, err := clientV2.ListOrganizations()
 	if err != nil {
-		logger.Error("circleci_insights_workflow_run.parentCircleCIWorkflows", "list_projects_error", err)
+		logger.Error("circleci_insights_workflow_run.parentCircleCIWorkflows", "list_organizations_error", err)
 		return nil, err
 	}
 
-	for _, project := range projects {
-		_, projectSlug := Slugify(project.VCSURL, project.Username, project.Reponame)
-		if projectSlug != projectSlugQual {
-			continue
-		}
-		projectSlugSplit := strings.Split(projectSlug, "/")
-		if len(projectSlugSplit) < 3 {
-			err := errors.New("Malformed input for project_slug. Expected: {VCS}/{Org username}/{Repository name}")
-			logger.Error("circleci_insights_workflow_run.parentCircleCIWorkflows", "malformed_input", err)
-			return nil, err
-		}
-		vcs := projectSlugSplit[0]
-		organization := projectSlugSplit[1]
+	for _, organization := range *organizations {
+		logger.Debug("circleci_insights_workflow_run.parentCircleCIWorkflows", "organization", organization.Slug)
+		vcs := strings.Split(organization.Slug, "/")[0]
 
-		pipelines, err := clientV2.ListPipelines(vcs, organization)
+		pipelines, err := clientV2.ListPipelines(vcs, organization.Name)
 		if err != nil {
+			if strings.Contains(err.Error(), "Organization not found") {
+				logger.Warn("circleci_insights_workflow_run.parentCircleCIWorkflows", "list_pipelines_error", fmt.Sprintf("Organization not found: %s", organization.Slug))
+				continue
+			}
 			logger.Error("circleci_insights_workflow_run.parentCircleCIWorkflows", "list_pipelines_error", err)
 			return nil, err
 		}
 
+		// a list of map[string]string{} to store the unique workflows
+		// this is to avoid duplicate workflows
+		var uniqueWorkflows []map[string]string
+
+		// list all the pipelines for the organization
 		for _, pipeline := range pipelines.Items {
+			// if the project slug is provided, skip the other projects
+			if projectSlugQual != "" && pipeline.ProjectSlug != projectSlugQual {
+				continue
+			}
+
+			// Generate a random sleep duration between 0 and 3 milliseconds to avoid hitting the rate limit
+			rand.Seed(time.Now().UnixNano())
+			sleepDuration := time.Duration(rand.Intn(3)) * time.Millisecond
+			time.Sleep(sleepDuration)
+
+			// list all the workflows for the pipeline
 			workflows, err := clientV2.ListPipelinesWorkflow(pipeline.ID)
 			if err != nil {
 				logger.Error("circleci_insights_workflow_run.parentCircleCIWorkflows", "list_workflows_error", err)
 				return nil, err
 			}
-			d.StreamListItem(ctx, workflows)
+			for _, workflow := range workflows.Items {
+				// if the workflow name is provided, skip the other workflows
+				if workflowNameQual != "" && workflow.Name != workflowNameQual {
+					continue
+				}
+
+				// adds the workflow to the uniqueWorkflows list
+				// if the workflow is already in the list, it will be skipped
+				if !isWorkflowInList(uniqueWorkflows, workflow) {
+					uniqueWorkflows = append(uniqueWorkflows, map[string]string{
+						"project_slug":  workflow.ProjectSlug,
+						"workflow_name": workflow.Name,
+					})
+				}
+			}
+		}
+		// streams the unique workflows
+		for _, uniqueWorkflow := range uniqueWorkflows {
+			d.StreamListItem(ctx, uniqueWorkflow)
 		}
 
-		// Context can be cancelled due to manual cancellation or the limit has been hit
-		if d.RowsRemaining(ctx) == 0 {
-			return nil, nil
-		}
 	}
 	return nil, nil
+}
+
+func isWorkflowInList(workflows []map[string]string, workflow rest.Workflow) bool {
+	for _, w := range workflows {
+		if w["project_slug"] == workflow.ProjectSlug && w["workflow_name"] == workflow.Name {
+			return true
+		}
+	}
+	return false
 }
