@@ -1,3 +1,10 @@
+## v0.3.0 [2023-06-30]
+
+_What's new?_
+
+- New tables added
+  - [circleci_insights_workflow_run](https://hub.steampipe.io/plugins/turbot/circleci/tables/circleci_insights_workflow_run) ([#8](https://github.com/turbot/steampipe-plugin-circleci/pull/8)) (Thanks [leonid-panich](https://github.com/leonid-panich) for the contribution!)
+
 ## v0.2.0 [2023-04-11]
 
 _Dependencies_
