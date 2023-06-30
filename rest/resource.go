@@ -40,23 +40,40 @@ type PipelineResponse struct {
 	} `json:"items"`
 	NextPageToken string `json:"next_page_token"`
 }
-
+type Workflow struct {
+	PipelineID     string    `json:"pipeline_id"`
+	CanceledBy     string    `json:"canceled_by"`
+	ID             string    `json:"id"`
+	Name           string    `json:"name"`
+	ProjectSlug    string    `json:"project_slug"`
+	ErroredBy      string    `json:"errored_by"`
+	Tag            string    `json:"tag"`
+	Status         string    `json:"status"`
+	StartedBy      string    `json:"started_by"`
+	PipelineNumber int       `json:"pipeline_number"`
+	CreatedAt      time.Time `json:"created_at"`
+	StoppedAt      time.Time `json:"stopped_at"`
+}
 type WorkflowResponse struct {
-	Items []struct {
-		PipelineID     string    `json:"pipeline_id"`
-		CanceledBy     string    `json:"canceled_by"`
-		ID             string    `json:"id"`
-		Name           string    `json:"name"`
-		ProjectSlug    string    `json:"project_slug"`
-		ErroredBy      string    `json:"errored_by"`
-		Tag            string    `json:"tag"`
-		Status         string    `json:"status"`
-		StartedBy      string    `json:"started_by"`
-		PipelineNumber int       `json:"pipeline_number"`
-		CreatedAt      time.Time `json:"created_at"`
-		StoppedAt      time.Time `json:"stopped_at"`
-	} `json:"items"`
-	NextPageToken string `json:"next_page_token"`
+	Items         []Workflow `json:"items"`
+	NextPageToken string     `json:"next_page_token"`
+}
+
+type InsightsWorkflowRunResponse struct {
+	Items         []InsightsWorkflowRun `json:"items"`
+	NextPageToken string                `json:"next_page_token"`
+}
+
+type InsightsWorkflowRun struct {
+	ID           string    `json:"id"`
+	WorkflowName string    `json:"workflow_name"`
+	ProjectSlug  string    `json:"project_slug"`
+	Branch       string    `json:"branch"`
+	Duration     int       `json:"duration"`
+	CreatedAt    time.Time `json:"created_at"`
+	StoppedAt    time.Time `json:"stopped_at"`
+	CreditsUsed  int       `json:"credits_used"`
+	Status       string    `json:"status"`
 }
 
 type OrganizationResponse struct {
