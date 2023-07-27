@@ -89,4 +89,4 @@ export CIRCLECI_TOKEN=1234ee38fc6943f6cb9537a564e9a6dac6ef1463
 ## Get involved
 
 - Open source: https://github.com/turbot/steampipe-plugin-circleci
-- Community: [Slack Channel](https://steampipe.io/community/join)
+- Community: [Join #steampipe on Slack →](https://turbot.com/community/join)
