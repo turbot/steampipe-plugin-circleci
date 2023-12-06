@@ -16,7 +16,19 @@ The `circleci_context_environment_variable` table provides insights into the env
 ### Environment variables in a context
 Explore the environment variables associated with a specific context in CircleCI to understand when they were created and last updated. This can be useful for auditing and managing configurations across projects.
 
-```sql
+```sql+postgres
+select
+  context_id,
+  variable,
+  created_at,
+  updated_at
+from
+  circleci_context_environment_variable
+where
+  context_id = '60d77d33-a62c-4167-90be-3e02ee38a75b';
+```
+
+```sql+sqlite
 select
   context_id,
   variable,
@@ -31,7 +43,7 @@ where
 ### Environment variables not updated for more than 90 days
 Determine the areas in which CircleCI environment variables have not been updated for more than 90 days. This could be useful for auditing and maintaining best practices for regular updates and security.
 
-```sql
+```sql+postgres
 select
   context_id,
   variable,
@@ -42,4 +54,17 @@ from
 where
   context_id = '60d77d33-a62c-4167-90be-3e02ee38a75b'
   and updated_at < current_date - interval '90' day;
+```
+
+```sql+sqlite
+select
+  context_id,
+  variable,
+  created_at,
+  updated_at 
+from
+  circleci_context_environment_variable
+where
+  context_id = '60d77d33-a62c-4167-90be-3e02ee38a75b'
+  and updated_at < date('now','-90 day');
 ```

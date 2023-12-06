@@ -11,12 +11,28 @@ CircleCI is a Continuous Integration and Continuous Deployment (CI/CD) platform 
 
 The `circleci_workflow` table provides insights into Workflows within CircleCI. As an engineer or developer, explore workflow-specific details through this table, including status, project details, pipeline information, and more. Utilize it to uncover information about workflows, such as those with failed jobs, the run order of jobs within a workflow, and the overall status of workflows.
 
+**Important Notes**
+ - You must specify `pipeline_id` in the `where` clause to query this table.
+
 ## Examples
 
 ### Workflow status of a pipeline
 Explore the status history of a specific pipeline to understand its progression over time. This can be useful in identifying patterns or issues in the pipeline's workflow.
 
-```sql
+```sql+postgres
+select
+  id,
+  created_at,
+  status
+from
+  circleci_workflow
+where
+  pipeline_id = 'f43cc52a-c7eb-4a72-a05f-399c8577bb3e'
+order by
+  created_at desc;
+```
+
+```sql+sqlite
 select
   id,
   created_at,
@@ -32,7 +48,7 @@ order by
 ### Workflow duration of a pipeline
 Analyze the duration of a specific pipeline's workflow in CircleCI. This can be useful in assessing the efficiency of the pipeline, identifying potential areas for optimization.
 
-```sql
+```sql+postgres
 select
   id,
   project_slug,
@@ -42,6 +58,17 @@ from
     stopped_at - created_at
   )
 ) as duration_in_seconds
+from
+  circleci_workflow
+where
+  pipeline_id = 'f43cc52a-c7eb-4a72-a05f-399c8577bb3e';
+```
+
+```sql+sqlite
+select
+  id,
+  project_slug,
+  strftime('%s', stopped_at) - strftime('%s', created_at) as duration_in_seconds
 from
   circleci_workflow
 where

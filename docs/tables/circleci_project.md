@@ -16,7 +16,7 @@ The `circleci_project` table provides insights into projects within CircleCI. As
 ### List checkout keys of a project
 Explore the different checkout keys associated with a specific project to gain insights into their attributes such as fingerprint, preference, public key, time, type, and login. This can be particularly useful for project management and security purposes, such as tracking key usage and identifying preferred keys.
 
-```sql
+```sql+postgres
 select
   k ->> 'fingerprint' as fingerprint,
   k ->> 'preferred' as preferred,
@@ -33,10 +33,27 @@ order by
   k ->> 'time';
 ```
 
+```sql+sqlite
+select
+  json_extract(k.value, '$.fingerprint') as fingerprint,
+  json_extract(k.value, '$.preferred') as preferred,
+  json_extract(k.value, '$.public_key') as public_key,
+  json_extract(k.value, '$.time') as time,
+  json_extract(k.value, '$.type') as type,
+  json_extract(k.value, '$.login') as login
+from
+  circleci_project p,
+  json_each(p.checkout_keys) as k
+where
+  p.slug = 'gh/fluent-cattle/sp-plugin-test'
+order by
+  json_extract(k.value, '$.time');
+```
+
 ### Projects with builds running on the main branch
 Explore which projects are currently executing builds on the main branch. This can be useful in identifying active development efforts and monitoring build statuses in real-time.
 
-```sql
+```sql+postgres
 select
   concat(username, '/', reponame) as repository,
   'main' as branch,
@@ -50,10 +67,21 @@ where
   is not null;
 ```
 
+```sql+sqlite
+select
+  username || '/' || reponame as repository,
+  'main' as branch,
+  json_array_length(json_extract(branches, '$.main.running_builds')) as running_builds
+from
+  circleci_project
+where
+  json_extract(branches, '$.main') is not null;
+```
+
 ### Project's last successful build (main branch)
 Analyze the settings to understand the last successful build for a project's main branch in CircleCI. This is useful for tracking the progress and stability of your main branch over time.
 
-```sql
+```sql+postgres
 select
   concat(username, '/', reponame) as repository,
   branches -> 'main' -> 'last_success' -> 'build_num' as build_num
@@ -64,4 +92,14 @@ where
     branches -> 'main'
   )
   is not null;
+```
+
+```sql+sqlite
+select
+  username || '/' || reponame as repository,
+  json_extract(json_extract(branches, '$.main'), '$.last_success.build_num') as build_num
+from
+  circleci_project
+where
+  json_extract(branches, '$.main') is not null;
 ```

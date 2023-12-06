@@ -16,7 +16,17 @@ The `circleci_context` table provides insights into contexts within CircleCI. As
 ### Contexts across my organizations
 Explore the various contexts within your organizations to understand when they were created and their correlation with specific organization slugs. This can help in managing and organizing your resources more efficiently.
 
-```sql
+```sql+postgres
+select
+  id,
+  name,
+  organization_slug,
+  created_at
+from
+  circleci_context;
+```
+
+```sql+sqlite
 select
   id,
   name,
@@ -29,7 +39,23 @@ from
 ### Context environment variables of an organization
 Discover the environment variables within a specific organization's context to understand when they were created or last updated. This can help in maintaining the organization's configuration and track any changes made over time.
 
-```sql
+```sql+postgres
+select
+  c.name as context,
+  v.context_id,
+  v.variable,
+  v.created_at,
+  v.updated_at
+from
+  circleci_context c
+  join
+    circleci_context_environment_variable v
+    on v.context_id = c.id
+where
+  organization_slug = 'gh/fluent-cattle';
+```
+
+```sql+sqlite
 select
   c.name as context,
   v.context_id,

@@ -16,7 +16,7 @@ The `circleci_insights_workflow_run` table provides insights into Workflow Runs 
 ### Get average duration and deployment count of a project for each month
 Analyze the performance of a specific project over time by determining the average duration and number of successful deployments each month. This can help assess the efficiency of the project's workflow and identify potential areas for improvement.
 
-```sql
+```sql+postgres
 select
   project_slug,
   workflow_name,
@@ -36,10 +36,30 @@ group by
   year_month;
 ```
 
+```sql+sqlite
+select
+  project_slug,
+  workflow_name,
+  id,
+  strftime('%Y-%m', created_at) as year_month,
+  avg(duration) as average_duration,
+  count(id) as deployment_count
+from
+  circleci_insights_workflow_run
+where
+  workflow_name = 'default'
+  and project_slug = 'gh/companyname/projectname'
+  and branch = 'main'
+  and status = 'success'
+group by
+  project_slug,
+  year_month;
+```
+
 ### List workflows created in the last 30 days
 Explore the recent workflows created in your project over the past month. This is useful for tracking project progress and assessing the duration of each workflow.
 
-```sql
+```sql+postgres
 select
   workflow_name,
   branch,
@@ -54,10 +74,40 @@ where
   and created_at >= current_date - interval '30' day;
 ```
 
+```sql+sqlite
+select
+  workflow_name,
+  branch,
+  id,
+  project_slug,
+  duration
+from
+  circleci_insights_workflow_run
+where
+  workflow_name = 'default'
+  and project_slug = 'gh/companyname/projectname'
+  and created_at >= date('now','-30 day');
+```
+
 ### List workflows which are in failed state
 Uncover the details of failed workflows within a specific project. This query is useful to identify bottlenecks, analyze project performance, and implement corrective measures.
 
-```sql
+```sql+postgres
+select
+  workflow_name,
+  branch,
+  id,
+  project_slug,
+  duration
+from
+  circleci_insights_workflow_run
+where
+  workflow_name = 'default'
+  and project_slug = 'gh/companyname/projectname'
+  and status = 'failed';
+```
+
+```sql+sqlite
 select
   workflow_name,
   branch,
