@@ -8,6 +8,7 @@ name: "circleci"
 description: "Steampipe plugin for querying resource projects, pipelines, builds and more from CircleCI."
 og_description: "Query CircleCI with SQL! Open source CLI. No DB required."
 og_image: "/images/plugins/turbot/circleci-social-graphic.png"
+engines: ["steampipe", "sqlite", "postgres", "export"]
 ---
 
 # CircleCI + Steampipe
