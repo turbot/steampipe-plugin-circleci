@@ -87,7 +87,4 @@ The CircleCI plugin will use the standard CircleCI environment variables to obta
 export CIRCLECI_TOKEN=1234ee38fc6943f6cb9537a564e9a6dac6ef1463
 ```
 
-## Get involved
 
-- Open source: https://github.com/turbot/steampipe-plugin-circleci
-- Community: [Join #steampipe on Slack →](https://turbot.com/community/join)
