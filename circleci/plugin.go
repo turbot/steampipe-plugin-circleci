@@ -17,7 +17,6 @@ func Plugin(ctx context.Context) *plugin.Plugin {
 		DefaultRetryConfig: &plugin.RetryConfig{ShouldRetryErrorFunc: shouldRetryError([]string{"Rate Limit Exceeded"})},
 		ConnectionConfigSchema: &plugin.ConnectionConfigSchema{
 			NewInstance: ConfigInstance,
-			Schema:      ConfigSchema,
 		},
 		TableMap: map[string]*plugin.Table{
 			"circleci_build":                        tableCircleCIBuild(),
