@@ -1,12 +1,22 @@
-# Table: circleci_project
+---
+title: "Steampipe Table: circleci_project - Query CircleCI Projects using SQL"
+description: "Allows users to query CircleCI Projects, specifically project-level details and configurations, providing insights into project management and workflow orchestration."
+---
 
-A CircleCI project shares the name of the code repository for which it automates workflows, tests, and deployment.
+# Table: circleci_project - Query CircleCI Projects using SQL
+
+CircleCI is a continuous integration and delivery platform that automates the build, test, and deploy process for software applications. It allows developers to rapidly release code by automating the build, test, and delivery process. It integrates seamlessly with GitHub, Bitbucket, and other version control systems, making it a popular choice for software development teams.
+
+## Table Usage Guide
+
+The `circleci_project` table provides insights into projects within CircleCI. As a DevOps engineer, explore project-specific details through this table, including vcs type, username, project name, and default branch. Utilize it to uncover information about projects, such as those with specific configurations, the default branches for each project, and the version control systems in use.
 
 ## Examples
 
 ### List checkout keys of a project
+Explore the different checkout keys associated with a specific project to gain insights into their attributes such as fingerprint, preference, public key, time, type, and login. This can be particularly useful for project management and security purposes, such as tracking key usage and identifying preferred keys.
 
-```sql
+```sql+postgres
 select
   k ->> 'fingerprint' as fingerprint,
   k ->> 'preferred' as preferred,
@@ -23,9 +33,27 @@ order by
   k ->> 'time';
 ```
 
-### Projects with builds running on the main branch
+```sql+sqlite
+select
+  json_extract(k.value, '$.fingerprint') as fingerprint,
+  json_extract(k.value, '$.preferred') as preferred,
+  json_extract(k.value, '$.public_key') as public_key,
+  json_extract(k.value, '$.time') as time,
+  json_extract(k.value, '$.type') as type,
+  json_extract(k.value, '$.login') as login
+from
+  circleci_project p,
+  json_each(p.checkout_keys) as k
+where
+  p.slug = 'gh/fluent-cattle/sp-plugin-test'
+order by
+  json_extract(k.value, '$.time');
+```
 
-```sql
+### Projects with builds running on the main branch
+Explore which projects are currently executing builds on the main branch. This can be useful in identifying active development efforts and monitoring build statuses in real-time.
+
+```sql+postgres
 select
   concat(username, '/', reponame) as repository,
   'main' as branch,
@@ -39,9 +67,21 @@ where
   is not null;
 ```
 
-### Project's last successful build (main branch)
+```sql+sqlite
+select
+  username || '/' || reponame as repository,
+  'main' as branch,
+  json_array_length(json_extract(branches, '$.main.running_builds')) as running_builds
+from
+  circleci_project
+where
+  json_extract(branches, '$.main') is not null;
+```
 
-```sql
+### Project's last successful build (main branch)
+Analyze the settings to understand the last successful build for a project's main branch in CircleCI. This is useful for tracking the progress and stability of your main branch over time.
+
+```sql+postgres
 select
   concat(username, '/', reponame) as repository,
   branches -> 'main' -> 'last_success' -> 'build_num' as build_num
@@ -52,4 +92,14 @@ where
     branches -> 'main'
   )
   is not null;
+```
+
+```sql+sqlite
+select
+  username || '/' || reponame as repository,
+  json_extract(json_extract(branches, '$.main'), '$.last_success.build_num') as build_num
+from
+  circleci_project
+where
+  json_extract(branches, '$.main') is not null;
 ```

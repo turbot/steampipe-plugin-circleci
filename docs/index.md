@@ -8,13 +8,14 @@ name: "circleci"
 description: "Steampipe plugin for querying resource projects, pipelines, builds and more from CircleCI."
 og_description: "Query CircleCI with SQL! Open source CLI. No DB required."
 og_image: "/images/plugins/turbot/circleci-social-graphic.png"
+engines: ["steampipe", "sqlite", "postgres", "export"]
 ---
 
 # CircleCI + Steampipe
 
 [CircleCI](https://www.circleci.com/) is the leading open source automation server, CircleCI provides hundreds of plugins to support building, deploying and automating any project.
 
-[Steampipe](https://steampipe.io) is an open source CLI to instantly query cloud APIs using SQL.
+[Steampipe](https://steampipe.io) is an open-source zero-ETL engine to instantly query cloud APIs using SQL.
 
 For example:
 
@@ -86,7 +87,4 @@ The CircleCI plugin will use the standard CircleCI environment variables to obta
 export CIRCLECI_TOKEN=1234ee38fc6943f6cb9537a564e9a6dac6ef1463
 ```
 
-## Get involved
 
-- Open source: https://github.com/turbot/steampipe-plugin-circleci
-- Community: [Join #steampipe on Slack →](https://turbot.com/community/join)
