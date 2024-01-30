@@ -440,8 +440,8 @@ github.com/json-iterator/go v1.1.11/go.mod h1:KdQUCv79m/52Kvf8AW2vK1V8akMuk1QjK/
 github.com/json-iterator/go v1.1.12/go.mod h1:e30LSqwooZae/UwlEbR2852Gd8hjQvJoHmT4TnhNGBo=
 github.com/jstemmer/go-junit-report v0.0.0-20190106144839-af01ea7f8024/go.mod h1:6v2b51hI/fHJwM22ozAgKL4VKDeJcHhJFhtBdhmNjmU=
 github.com/jstemmer/go-junit-report v0.9.1/go.mod h1:Brl9GWCQeLvo8nXZwPNNblvFj/XSXhF0NWZEnDohbsk=
-github.com/jszwedko/go-circleci v0.3.0 h1:zmYFSb2NlSvUvXydYcJY2AF6n88LGa+5teZtCm2pmmk=
-github.com/jszwedko/go-circleci v0.3.0/go.mod h1:z1630OiB7oGxZwE90het04Ld7rIu0AKvY9JCRnaBdoE=
+github.com/jszwedko/go-circleci v0.4.0 h1:rOPV9HbTqwvWnEeKPqz2SZSj3/vNF3KrYyZHi3gvfJE=
+github.com/jszwedko/go-circleci v0.4.0/go.mod h1:wlb7FpyrcXeWMseT7tdovNkQUHITpgEC/qcrT+ZgyWw=
 github.com/julienschmidt/httprouter v1.2.0/go.mod h1:SYymIcj16QtmaHHD7aYtjjsJG7VTCxuUUipMqKk8s4w=
 github.com/julienschmidt/httprouter v1.3.0/go.mod h1:JR6WtHb+2LUe8TCKY3cZOxFyyO8IZAc4RVcycCCAKdM=
 github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
