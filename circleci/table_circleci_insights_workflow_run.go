@@ -31,7 +31,7 @@ func tableCircleCIInsightsWorkflowRun() *plugin.Table {
 			},
 		},
 
-		Columns: []*plugin.Column{
+		Columns: commonColumns([]*plugin.Column{
 			{Name: "project_slug", Description: "A unique identification for the project in the form of: <vcs_type>/<org_name>/<repo_name>.", Type: proto.ColumnType_STRING},
 			{Name: "workflow_name", Description: "The name of the workflow.", Type: proto.ColumnType_STRING},
 			{Name: "id", Description: "Unique key for the workflow.", Type: proto.ColumnType_STRING, Transform: transform.FromField("ID")},
@@ -41,7 +41,7 @@ func tableCircleCIInsightsWorkflowRun() *plugin.Table {
 			{Name: "stopped_at", Description: "Timestamp of when workflow was stopped.", Type: proto.ColumnType_TIMESTAMP},
 			{Name: "credits_used", Description: "The number of credits used during execution.", Type: proto.ColumnType_INT},
 			{Name: "status", Description: "Workflow status.", Type: proto.ColumnType_STRING},
-		},
+		}),
 	}
 }
 

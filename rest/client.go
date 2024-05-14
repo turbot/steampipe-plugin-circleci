@@ -332,6 +332,28 @@ func (c *Client) ListAllInsightsWorkflowRuns(projectSlug, workflowName, branch, 
 	return workflows, nil
 }
 
+func (c *Client) GetCurrentLogin() (*CurrentLogin, error) {
+		u := &url.URL{
+		Path: "me",
+	}
+	values := u.Query()
+	u.RawQuery = values.Encode()
+
+	req, err := c.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	currentLogin := &CurrentLogin{}
+
+	_, err = c.DoRequest(req, currentLogin)
+	if err != nil {
+		return nil, err
+	}
+
+	return currentLogin, nil
+}
+
 // Slug returns a project slug, including the VCS, organization, and project names
 func Slug(vcs, org, project string) string {
 	return fmt.Sprintf("%s/%s/%s", vcs, org, project)

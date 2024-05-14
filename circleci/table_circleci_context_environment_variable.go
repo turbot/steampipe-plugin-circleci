@@ -20,12 +20,12 @@ func tableCircleCIContextEnvironmentVariable() *plugin.Table {
 			ParentHydrate: listCircleCIOrganizations,
 		},
 
-		Columns: []*plugin.Column{
+		Columns: commonColumns([]*plugin.Column{
 			{Name: "context_id", Description: "Unique key for the context.", Transform: transform.FromField("ContextID"), Type: proto.ColumnType_STRING},
 			{Name: "variable", Description: "Variable name.", Type: proto.ColumnType_STRING},
 			{Name: "created_at", Description: "Timestamp of when pipeline was created.", Type: proto.ColumnType_TIMESTAMP},
 			{Name: "updated_at", Description: "Timestamp of when variable was updated.", Type: proto.ColumnType_TIMESTAMP},
-		},
+		}),
 	}
 }
 

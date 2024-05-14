@@ -18,6 +18,12 @@ func Plugin(ctx context.Context) *plugin.Plugin {
 		ConnectionConfigSchema: &plugin.ConnectionConfigSchema{
 			NewInstance: ConfigInstance,
 		},
+		ConnectionKeyColumns: []plugin.ConnectionKeyColumn{
+			{
+				Name:    "login_id",
+				Hydrate: getLoginId,
+			},
+		},
 		TableMap: map[string]*plugin.Table{
 			"circleci_build":                        tableCircleCIBuild(),
 			"circleci_context":                      tableCircleCIContext(),

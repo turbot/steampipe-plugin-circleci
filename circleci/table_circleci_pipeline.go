@@ -21,7 +21,7 @@ func tableCircleCIPipeline() *plugin.Table {
 			KeyColumns: plugin.SingleColumn("project_slug"),
 		},
 
-		Columns: []*plugin.Column{
+		Columns: commonColumns([]*plugin.Column{
 			{Name: "project_slug", Description: "A unique identification for the project in the form of: <vcs_type>/<org_name>/<repo_name>.", Type: proto.ColumnType_STRING},
 			{Name: "id", Description: "Unique key for the pipeline.", Type: proto.ColumnType_STRING, Transform: transform.FromField("ID")},
 			{Name: "number", Description: "A second identifier for the pipeline.", Type: proto.ColumnType_INT},
@@ -32,7 +32,7 @@ func tableCircleCIPipeline() *plugin.Table {
 			{Name: "trigger", Description: "What triggers the pipeline to run.", Type: proto.ColumnType_JSON},
 			{Name: "updated_at", Description: "Timestamp of when pipeline was updated.", Type: proto.ColumnType_TIMESTAMP},
 			{Name: "vcs", Description: "Version control system of the pipeline", Type: proto.ColumnType_JSON},
-		},
+		}),
 	}
 }
 

@@ -108,3 +108,9 @@ type EnvironmentVariable struct {
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
+
+type CurrentLogin struct {
+	Name  string `json:"name"`
+	Login string `json:"login"`
+	ID    string `json:"id"`
+}

@@ -18,7 +18,7 @@ func tableCircleCIProject() *plugin.Table {
 			Hydrate: listCircleCIProjects,
 		},
 
-		Columns: []*plugin.Column{
+		Columns: commonColumns([]*plugin.Column{
 			{Name: "slug", Description: "A unique identification for the project in the form of: <vcs_type>/<org_name>/<repo_name>.", Type: proto.ColumnType_STRING},
 			{Name: "organization_slug", Description: "Organization that pipeline belongs to, in the form of: <vcs_type>/<org_name>.", Type: proto.ColumnType_STRING},
 			{Name: "username", Description: "Organization or person's username who owns the repository.", Type: proto.ColumnType_STRING},
@@ -28,7 +28,7 @@ func tableCircleCIProject() *plugin.Table {
 			{Name: "env_vars", Description: "Environment variables set on the project.", Type: proto.ColumnType_JSON},
 			{Name: "checkout_keys", Description: "Keys used to checkout the code from VCS.", Type: proto.ColumnType_JSON},
 			{Name: "branches", Description: "Branches of the repository the project represents.", Type: proto.ColumnType_JSON},
-		},
+		}),
 	}
 }
 
