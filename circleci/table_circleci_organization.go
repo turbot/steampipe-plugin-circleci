@@ -18,13 +18,13 @@ func tableCircleCIOrganization() *plugin.Table {
 			Hydrate: listCircleCIOrganizations,
 		},
 
-		Columns: []*plugin.Column{
+		Columns: commonColumns([]*plugin.Column{
 			{Name: "id", Description: "Unique key for the organization.", Type: proto.ColumnType_STRING, Transform: transform.FromField("ID")},
 			{Name: "slug", Description: "A unique identification for the organization in the form of: <vcs_type>/<org_name>.", Type: proto.ColumnType_STRING},
 			{Name: "name", Description: "The organization name.", Type: proto.ColumnType_STRING},
 			{Name: "vcs_type", Description: "Version control system of the organization.", Type: proto.ColumnType_STRING},
 			{Name: "avatar_url", Description: "Avatar icon of the organization.", Type: proto.ColumnType_STRING},
-		},
+		}),
 	}
 }
 

@@ -18,7 +18,7 @@ func tableCircleCIBuild() *plugin.Table {
 			Hydrate: listCircleCIBuilds,
 		},
 
-		Columns: []*plugin.Column{
+		Columns: commonColumns([]*plugin.Column{
 			{Name: "build_num", Description: "Sequential number of build.", Type: proto.ColumnType_INT},
 			{Name: "project_slug", Description: "A unique identification for the project in the form of: <vcs_type>/<org_name>/<repo_name>.", Type: proto.ColumnType_STRING},
 			{Name: "organization_slug", Description: "Organization that pipeline belongs to, in the form of: <vcs_type>/<org_name>.", Type: proto.ColumnType_STRING},
@@ -58,7 +58,7 @@ func tableCircleCIBuild() *plugin.Table {
 			{Name: "vcs_tag", Description: "VCS Tag.", Type: proto.ColumnType_STRING},
 			{Name: "vcs_url", Description: "VCS URL.", Type: proto.ColumnType_STRING, Transform: transform.FromField("VCSURL")},
 			{Name: "workflows", Description: "Workflow which ran the build.", Type: proto.ColumnType_JSON, Transform: transform.FromField("workflows")},
-		},
+		}),
 	}
 }
 

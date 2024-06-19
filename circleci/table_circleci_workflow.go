@@ -19,7 +19,7 @@ func tableCircleCIWorkflow() *plugin.Table {
 			KeyColumns: plugin.SingleColumn("pipeline_id"),
 		},
 
-		Columns: []*plugin.Column{
+		Columns: commonColumns([]*plugin.Column{
 			{Name: "canceled_by", Description: "ID of the user who canceled the workflow.", Type: proto.ColumnType_STRING},
 			{Name: "created_at", Description: "Timestamp of when workflow was created.", Type: proto.ColumnType_TIMESTAMP},
 			{Name: "errored_by", Description: "ID of the user who caused the workflow to error.", Type: proto.ColumnType_STRING},
@@ -31,7 +31,7 @@ func tableCircleCIWorkflow() *plugin.Table {
 			{Name: "started_by", Description: "Id of the user who started the workflow.", Type: proto.ColumnType_STRING},
 			{Name: "status", Description: "Workflow status.", Type: proto.ColumnType_STRING},
 			{Name: "stopped_at", Description: "Timestamp of when workflow was stopped.", Type: proto.ColumnType_TIMESTAMP},
-		},
+		}),
 	}
 }
 

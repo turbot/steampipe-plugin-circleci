@@ -20,12 +20,12 @@ func tableCircleCIContext() *plugin.Table {
 			ParentHydrate: listCircleCIOrganizations,
 		},
 
-		Columns: []*plugin.Column{
+		Columns: commonColumns([]*plugin.Column{
 			{Name: "id", Description: "Unique key for the context.", Type: proto.ColumnType_STRING, Transform: transform.FromField("ID")},
 			{Name: "organization_slug", Description: "A unique identification for the organization in the form of: <vcs_type>/<org_name>.", Type: proto.ColumnType_STRING},
 			{Name: "name", Description: "The context name.", Type: proto.ColumnType_STRING},
 			{Name: "created_at", Description: "Timestamp of when context was created.", Type: proto.ColumnType_TIMESTAMP},
-		},
+		}),
 	}
 }
 
