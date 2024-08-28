@@ -1,12 +1,14 @@
 module github.com/turbot/steampipe-plugin-circleci
 
-go 1.21.6
+go 1.22.4
+
+toolchain go1.22.6
 
 require (
 	github.com/CircleCI-Public/circleci-cli v0.1.27054
 	github.com/hashicorp/go-hclog v1.6.2
 	github.com/jszwedko/go-circleci v0.4.0
-	github.com/turbot/steampipe-plugin-sdk/v5 v5.10.1
+	github.com/turbot/steampipe-plugin-sdk/v5 v5.10.3
 )
 
 require (
