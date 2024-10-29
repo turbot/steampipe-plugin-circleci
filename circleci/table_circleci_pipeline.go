@@ -69,6 +69,14 @@ func listCircleCIPipelines(ctx context.Context, d *plugin.QueryData, _ *plugin.H
 	}
 
 	for _, pipeline := range pipelines.Items {
+
+		// For projects that use GitLab or GitHub App, use circleci as the vcs-slug, replace org-name with the organization ID (found in Organization Settings), and replace repo-name with the project ID (found in Project Settings).
+		// If we pass the `project_slug` value as "select * from circleci_pipeline where project_slug = 'circleci/5ad8293d-30b0-4594-be94-0b28fb727eef/b20334e0-c813-4c0f-a27d-9a1ca2488548'",
+		// the API returns the value as "circleci/CDdrPhWsW7Pa5PNcj4Y7en/NywbLpDu1Eb1Pobxj3Nphu".
+		// Due to Steampipe's filtering mechanism, this results in empty rows.
+		// Since "project_slug" is required to query this table, we assign the "project_slug" from the WHERE clause directly.
+		pipeline.ProjectSlug = projectSlug
+		
 		d.StreamListItem(ctx, pipeline)
 
 		// Context can be cancelled due to manual cancellation or the limit has been hit
