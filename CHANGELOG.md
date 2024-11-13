@@ -2,7 +2,7 @@
 
 _Bug fixes_
 
-- Fixed `JSON unmarshalling` error of `trigger_parameters` for `circleci_pipeline` table. ([#53](https://github.com/turbot/steampipe-plugin-circleci/pull/53))
+- Fixed the `JSON unmarshalling` error when querying the `trigger_parameters` column of the `circleci_pipeline` table. ([#53](https://github.com/turbot/steampipe-plugin-circleci/pull/53))
 
 ## v1.0.0 [2024-10-22]
 
