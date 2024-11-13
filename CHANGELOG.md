@@ -1,3 +1,9 @@
+## v1.0.1 [2024-11-13]
+
+_Bug fixes_
+
+- Fixed `JSON unmarshalling` error of `trigger_parameters` for `circleci_pipeline` table. ([#53](https://github.com/turbot/steampipe-plugin-circleci/pull/53))
+
 ## v1.0.0 [2024-10-22]
 
 There are no significant changes in this plugin version; it has been released to align with [Steampipe's v1.0.0](https://steampipe.io/changelog/steampipe-cli-v1-0-0) release. This plugin adheres to [semantic versioning](https://semver.org/#semantic-versioning-specification-semver), ensuring backward compatibility within each major version.
