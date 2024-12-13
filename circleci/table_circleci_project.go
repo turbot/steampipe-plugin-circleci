@@ -2,6 +2,7 @@ package circleci
 
 import (
 	"context"
+	"strings"
 
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
@@ -34,7 +35,7 @@ func tableCircleCIProject() *plugin.Table {
 
 //// LIST FUNCTION
 
-func listCircleCIProjects(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
+func listCircleCIProjects(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
 	logger := plugin.Logger(ctx)
 	client, err := ConnectV1Sdk(ctx, d)
 	if err != nil {
@@ -48,9 +49,29 @@ func listCircleCIProjects(ctx context.Context, d *plugin.QueryData, _ *plugin.Hy
 		return nil, err
 	}
 
+	// Get project followed by user
+	// The List/Get project CLI call does not include slug information if the project is not associated with Bitbucket or GitHub on CircleCI.
+	privateClient, err := ConnectPrivateRestApi(ctx, d)
+	if err != nil {
+		logger.Error("circleci_project.ConnectPrivateRestApi", "connect_error", err)
+		return nil, err
+	}
+
+	privateProfileInfo, err := privateClient.GetCurrentUserFollowedProject()
+	if err != nil {
+		logger.Error("circleci_project.GetCurrentUserFollowedProject", "api_error", err)
+		return nil, err
+	}
+
 	for _, project := range projects {
 
-		organizationSlug, projectSlug := Slugify(project.VCSURL, project.Username, project.Reponame)
+		organizationSlug, projectSlug := "", ""
+		for _, followedProject := range privateProfileInfo.FollowedProjects {
+			if project.Reponame == followedProject.Name {
+				projectSlug = followedProject.Slug
+				organizationSlug = strings.Join(strings.Split(followedProject.Slug, "/")[:2], "/")
+			}
+		}
 		envVars, _ := client.ListEnvVars(project.Username, project.Reponame)
 		checkoutKeys, _ := client.ListCheckoutKeys(project.Username, project.Reponame)
 
