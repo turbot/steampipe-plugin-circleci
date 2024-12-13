@@ -101,3 +101,35 @@ func ConnectV2RestApi(ctx context.Context, d *plugin.QueryData) (*rest.Client, e
 	return client, nil
 
 }
+
+func ConnectPrivateRestApi(ctx context.Context, d *plugin.QueryData) (*rest.Client, error) {
+	// have we already created and cached the session?
+	sessionCacheKey := "ConnectPrivateRestApi"
+	if cachedData, ok := d.ConnectionManager.Cache.Get(sessionCacheKey); ok {
+		return cachedData.(*rest.Client), nil
+	}
+
+	circleciConfig := GetConfig(d.Connection)
+
+	var defaultHost = "https://circleci.com/api/"
+	var apiToken string
+
+	if circleciConfig.ApiToken != nil {
+		apiToken = *circleciConfig.ApiToken
+	} else {
+		apiToken = os.Getenv("CIRCLECI_TOKEN")
+	}
+	// No creds
+	if apiToken == "" {
+		return nil, fmt.Errorf("api_token must be configured")
+	}
+	client := rest.New(rest.Config{
+		Token: apiToken,
+		URL:   defaultHost,
+	})
+	// Save session into cache
+	d.ConnectionManager.Cache.Set(sessionCacheKey, client)
+
+	return client, nil
+
+}
