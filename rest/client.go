@@ -5,12 +5,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/hashicorp/go-hclog"
 	"io"
 	"net/http"
 	"net/url"
 	"strings"
 	"time"
+
+	"github.com/hashicorp/go-hclog"
 )
 
 type Client struct {
@@ -333,7 +334,7 @@ func (c *Client) ListAllInsightsWorkflowRuns(projectSlug, workflowName, branch, 
 }
 
 func (c *Client) GetCurrentLogin() (*CurrentLogin, error) {
-		u := &url.URL{
+	u := &url.URL{
 		Path: "me",
 	}
 	values := u.Query()
@@ -352,6 +353,31 @@ func (c *Client) GetCurrentLogin() (*CurrentLogin, error) {
 	}
 
 	return currentLogin, nil
+}
+
+// Private user profile
+// API endpoint: https://circleci.com/api/private/me
+func (c *Client) GetCurrentUserFollowedProject() (*UserProfile, error) {
+	u := &url.URL{
+		Path: "private/me",
+	}
+
+	values := u.Query()
+	u.RawQuery = values.Encode()
+
+	req, err := c.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	userProfile := &UserProfile{}
+
+	_, err = c.DoRequest(req, userProfile)
+	if err != nil {
+		return nil, err
+	}
+
+	return userProfile, nil
 }
 
 // Slug returns a project slug, including the VCS, organization, and project names
