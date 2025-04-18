@@ -1,4 +1,8 @@
-## v1.1.0 [2025-04-17]
+## v1.1.0 [2025-04-18]
+
+_Bug fixes_
+
+- Fixed the `slug` column of `circleci_project` table to correctly return data instead of `null`. ([#57](https://github.com/turbot/steampipe-plugin-circleci/pull/57))
 
 _Dependencies_
 
