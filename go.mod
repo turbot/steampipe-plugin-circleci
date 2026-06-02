@@ -6,7 +6,7 @@ require (
 	github.com/CircleCI-Public/circleci-cli v0.1.27054
 	github.com/hashicorp/go-hclog v1.6.3
 	github.com/jszwedko/go-circleci v0.4.0
-	github.com/turbot/steampipe-plugin-sdk/v5 v5.14.0
+	github.com/turbot/steampipe-plugin-sdk/v5 v5.14.1
 )
 
 require (
