@@ -9,13 +9,13 @@ import (
 	"github.com/CircleCI-Public/circleci-cli/api/graphql"
 	"github.com/jszwedko/go-circleci"
 	"github.com/turbot/steampipe-plugin-circleci/rest"
-	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v6/plugin"
 )
 
 func ConnectV1Sdk(ctx context.Context, d *plugin.QueryData) (*circleci.Client, error) {
 	// have we already created and cached the session?
 	sessionCacheKey := "CircleciSessionV1Sdk"
-	if cachedData, ok := d.ConnectionManager.Cache.Get(sessionCacheKey); ok {
+	if cachedData, ok := d.ConnectionCache.Get(ctx, sessionCacheKey); ok {
 		return cachedData.(*circleci.Client), nil
 	}
 
@@ -34,7 +34,7 @@ func ConnectV1Sdk(ctx context.Context, d *plugin.QueryData) (*circleci.Client, e
 	}
 	client := &circleci.Client{Token: apiToken}
 	// Save session into cache
-	d.ConnectionManager.Cache.Set(sessionCacheKey, client)
+	_ = d.ConnectionCache.Set(ctx, sessionCacheKey, client)
 
 	return client, nil
 
@@ -43,7 +43,7 @@ func ConnectV1Sdk(ctx context.Context, d *plugin.QueryData) (*circleci.Client, e
 func ConnectV2Sdk(ctx context.Context, d *plugin.QueryData) (*graphql.Client, error) {
 	// have we already created and cached the session?
 	sessionCacheKey := "CircleciSessionV2Sdk"
-	if cachedData, ok := d.ConnectionManager.Cache.Get(sessionCacheKey); ok {
+	if cachedData, ok := d.ConnectionCache.Get(ctx, sessionCacheKey); ok {
 		return cachedData.(*graphql.Client), nil
 	}
 
@@ -64,7 +64,7 @@ func ConnectV2Sdk(ctx context.Context, d *plugin.QueryData) (*graphql.Client, er
 	}
 	client := graphql.NewClient(http.DefaultClient, defaultHost, defaultEndpoint, apiToken, false)
 	// Save session into cache
-	d.ConnectionManager.Cache.Set(sessionCacheKey, client)
+	_ = d.ConnectionCache.Set(ctx, sessionCacheKey, client)
 
 	return client, nil
 
@@ -73,7 +73,7 @@ func ConnectV2Sdk(ctx context.Context, d *plugin.QueryData) (*graphql.Client, er
 func ConnectV2RestApi(ctx context.Context, d *plugin.QueryData) (*rest.Client, error) {
 	// have we already created and cached the session?
 	sessionCacheKey := "CircleciSessionV2RestApi"
-	if cachedData, ok := d.ConnectionManager.Cache.Get(sessionCacheKey); ok {
+	if cachedData, ok := d.ConnectionCache.Get(ctx, sessionCacheKey); ok {
 		return cachedData.(*rest.Client), nil
 	}
 
@@ -96,7 +96,7 @@ func ConnectV2RestApi(ctx context.Context, d *plugin.QueryData) (*rest.Client, e
 		URL:   defaultHost,
 	})
 	// Save session into cache
-	d.ConnectionManager.Cache.Set(sessionCacheKey, client)
+	_ = d.ConnectionCache.Set(ctx, sessionCacheKey, client)
 
 	return client, nil
 
@@ -105,7 +105,7 @@ func ConnectV2RestApi(ctx context.Context, d *plugin.QueryData) (*rest.Client, e
 func ConnectPrivateRestApi(ctx context.Context, d *plugin.QueryData) (*rest.Client, error) {
 	// have we already created and cached the session?
 	sessionCacheKey := "ConnectPrivateRestApi"
-	if cachedData, ok := d.ConnectionManager.Cache.Get(sessionCacheKey); ok {
+	if cachedData, ok := d.ConnectionCache.Get(ctx, sessionCacheKey); ok {
 		return cachedData.(*rest.Client), nil
 	}
 
@@ -128,7 +128,7 @@ func ConnectPrivateRestApi(ctx context.Context, d *plugin.QueryData) (*rest.Clie
 		URL:   defaultHost,
 	})
 	// Save session into cache
-	d.ConnectionManager.Cache.Set(sessionCacheKey, client)
+	_ = d.ConnectionCache.Set(ctx, sessionCacheKey, client)
 
 	return client, nil
 

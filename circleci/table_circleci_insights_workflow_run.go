@@ -9,9 +9,9 @@ import (
 
 	"github.com/hashicorp/go-hclog"
 	"github.com/turbot/steampipe-plugin-circleci/rest"
-	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
-	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
-	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
+	"github.com/turbot/steampipe-plugin-sdk/v6/grpc/proto"
+	"github.com/turbot/steampipe-plugin-sdk/v6/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v6/plugin/transform"
 )
 
 //// TABLE DEFINITION
@@ -85,7 +85,7 @@ func listSingleWorkflowRuns(ctx context.Context, d *plugin.QueryData, logger hcl
 
 	projectSlugSplit := strings.Split(projectSlug, "/")
 	if len(projectSlugSplit) < 3 {
-		err := errors.New("Malformed input for project_slug. Expected: {VCS}/{Org username}/{Repository name}")
+		err := errors.New("malformed input for project_slug. Expected: {VCS}/{Org username}/{Repository name}")
 		logger.Error("circleci_insights_workflow_run.listSingleWorkflowRuns", "malformed_input", err)
 		return nil, err
 	}
