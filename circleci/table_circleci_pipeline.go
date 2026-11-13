@@ -5,9 +5,9 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
-	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
-	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
+	"github.com/turbot/steampipe-plugin-sdk/v6/grpc/proto"
+	"github.com/turbot/steampipe-plugin-sdk/v6/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v6/plugin/transform"
 )
 
 //// TABLE DEFINITION
@@ -49,7 +49,7 @@ func listCircleCIPipelines(ctx context.Context, d *plugin.QueryData, _ *plugin.H
 	}
 	projectSlugSplit := strings.Split(projectSlug, "/")
 	if len(projectSlugSplit) < 3 {
-		err := errors.New("Malformed input for project_slug. Expected: {VCS}/{Org username}/{Repository name}")
+		err := errors.New("malformed input for project_slug. Expected: {VCS}/{Org username}/{Repository name}")
 		logger.Error("circleci_pipeline.listCircleCIPipelines", "malformed_input", err)
 		return nil, err
 	}
@@ -76,7 +76,7 @@ func listCircleCIPipelines(ctx context.Context, d *plugin.QueryData, _ *plugin.H
 		// Due to Steampipe's filtering mechanism, this results in empty rows.
 		// Since "project_slug" is required to query this table, we assign the "project_slug" from the WHERE clause directly.
 		pipeline.ProjectSlug = projectSlug
-		
+
 		d.StreamListItem(ctx, pipeline)
 
 		// Context can be cancelled due to manual cancellation or the limit has been hit

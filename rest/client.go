@@ -74,7 +74,7 @@ func (c *Client) DoRequest(req *http.Request, resp interface{}) (statusCode int,
 	if err != nil {
 		return 0, err
 	}
-	defer httpResp.Body.Close()
+	defer func() { _ = httpResp.Body.Close() }()
 
 	if httpResp.StatusCode >= 300 {
 		httpError := struct {
